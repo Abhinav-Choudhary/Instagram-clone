@@ -1,0 +1,149 @@
+package edu.northeastern.dao;
+
+import java.util.List;
+
+import org.hibernate.Session;
+import org.hibernate.Transaction;
+import org.springframework.stereotype.Repository;
+
+import edu.northeastern.pojo.User;
+import edu.northeastern.util.RoleEnum;
+import edu.northeastern.util.VisibilityEnum;
+import jakarta.persistence.NoResultException;
+import jakarta.persistence.Query;
+import jakarta.servlet.http.HttpSession;
+
+@Repository
+public class UserDAO {
+
+    public boolean authenticateUser(User user, HttpSession session) {
+        String username = user.getUsername();
+        String password = user.getPassword();
+        User queryUser = findByUsernameOrEmail(username);
+        System.out.println(queryUser.getUsername());
+
+        if(queryUser != null) {
+            if(queryUser.getPassword().equals(password)) {
+                session.setAttribute("currentUser", queryUser);
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public List<User> getPublicUsers() {
+        String hql = "FROM user WHERE visibility = :visibility";
+        Query query = DAO.getSessionFactory().openSession().createQuery(hql);
+        query.setParameter("visibility", VisibilityEnum.PUBLIC);
+        List<User> users = query.getResultList();
+        return users;
+    }
+
+    public void getFollowedUsers(User user) {
+        //get users who followed user
+    }
+
+    public String authenticateAndRegister(User newUser, HttpSession session) {
+        User emailUser = findByEmail(newUser.getEmail());
+        if(emailUser != null) {
+            return "Email is not unique. Please check your inputs.";
+        }
+        User usernameUser = findByUsername(newUser.getUsername());
+        if(usernameUser != null) {
+            return "Username is not unique. Please check your inputs";
+        }
+        User savedUser = registerUser(newUser);
+        session.setAttribute("savedUser", savedUser);
+        return null;
+    }
+
+    public User registerUser(User newUser) {
+        Session session = DAO.getSessionFactory().openSession();
+        Transaction tx = session.beginTransaction();
+        session.persist(newUser);
+        tx.commit();
+        return newUser;
+    }
+
+    public void updateUser(User updateUser, HttpSession httpSession) {
+        Session session = DAO.getSessionFactory().openSession();
+        Transaction tx = session.beginTransaction();
+        session.merge(updateUser);
+        tx.commit();
+        User updatedUser = findById(updateUser.getId());
+        httpSession.setAttribute("currentUser", updatedUser);
+    }
+
+    public void deleteUser(User user) {
+        Session session = DAO.getSessionFactory().openSession();
+        Transaction tx = session.beginTransaction();
+        session.remove(user);
+        tx.commit();
+    }
+
+    public void makeUserAdmin(User user, HttpSession session) {
+        user.setRole(RoleEnum.ADMIN);
+        updateUser(user, session);
+    }
+
+    public void makeUserUser(User user, HttpSession session) {
+        user.setRole(RoleEnum.USER);
+        updateUser(user, session);
+    }
+
+    public List<User> getAllUsers() {
+        String hql = "FROM user";
+        Query query = DAO.getSessionFactory().openSession().createQuery(hql);
+        List<User> users = query.getResultList();
+        return users;
+    }
+
+    public User findById(int id) {
+        try {
+            String hql = "FROM user WHERE id = :id";
+            Query query = DAO.getSessionFactory().openSession().createQuery(hql);
+            query.setParameter("id", id);
+            User user = (User) query.getSingleResult();
+            return user;
+        } catch(NoResultException e) {
+            return null;
+        }
+    }
+
+    public User findByEmail(String email) {
+        try {
+            String hql = "FROM user WHERE email = :email";
+            Query query = DAO.getSessionFactory().openSession().createQuery(hql);
+            query.setParameter("email", email);
+            User user = (User) query.getSingleResult();
+            return user;
+        } catch(NoResultException e) {
+            return null;
+        }
+    }
+
+    public User findByUsername(String username) {
+        try {
+            String hql = "FROM user WHERE username = :username";
+            Query query = DAO.getSessionFactory().openSession().createQuery(hql);
+            query.setParameter("username", username);
+            User user = (User) query.getSingleResult();
+            return user;
+        } catch(NoResultException e) {
+            return null;
+        }
+    }
+
+    public User findByUsernameOrEmail(String username) {
+        try {
+            String hql = "FROM user WHERE username = :username OR email = :email";
+            Query query = DAO.getSessionFactory().openSession().createQuery(hql);
+            query.setParameter("username", username).setParameter("email", username);
+            User user = (User) query.getSingleResult();
+            return user;
+        } catch(NoResultException e) {
+            return null;
+        }
+    }
+}
