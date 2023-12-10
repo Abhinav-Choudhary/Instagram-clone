@@ -68,7 +68,8 @@
                     class="form-control" 
                     name="username" 
                     id="username"
-                    placeholder="Search by Username or Email">
+                    placeholder="Search by Username or Email"
+                    required>
                 </div>
                 <div class="form-group text-center">
                     <button type="submit" class="btn btn-success">Search</button>
@@ -76,7 +77,7 @@
                 <c:if test="${searchErrors != null}">
                     <div class="form-group">
                         <c:forEach items="${searchErrors}" var="error">
-                            <small class="text-danger">${error.code}</small>
+                            <small class="text-danger">${error.getDefaultMessage()}</small>
                         </c:forEach>
                     </div>
                 </c:if>

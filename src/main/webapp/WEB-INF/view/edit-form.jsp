@@ -82,14 +82,14 @@
                 </div>
                 <div class="form-group">
                     <label for="password">Password</label>
-                    <input type="text" class="form-control" name="password" id="password"
+                    <input type="password" class="form-control" name="password" id="password"
                         placeholder="Enter your password"
-                        value="${sessionScope.currentUser.password}">
+                        value="${sessionScope.currentUser.password}" required>
                 </div>
                 <div class="form-group">
                     <label for="bio">Bio</label>
                     <input type="text" class="form-control" name="bio" id="bio"
-                        placeholder="Enter your bio"
+                        placeholder="Enter your bio (max 255 characters)"
                         value="${sessionScope.currentUser.bio}"
                         maxlength="255">
                 </div>
@@ -119,7 +119,7 @@
                 <c:if test="${editUserErrors != null}">
                     <div class="form-group">
                         <c:forEach items="${editUserErrors}" var="error">
-                            <small class="text-danger">${error.code}</small>
+                            <small class="text-danger">${error.getDefaultMessage()}</small>
                         </c:forEach>
                     </div>
                 </c:if>

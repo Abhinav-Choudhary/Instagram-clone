@@ -47,6 +47,10 @@
         .signup-link {
             text-decoration: none;
         }
+        .errors-container {
+            display: flex;
+            flex-direction: column;
+        }
     </style>
 </head>
 
@@ -60,21 +64,24 @@
                 <div class="form-group">
                     <label for="username">Username or Email</label>
                     <input type="text" class="form-control" name="username" id="username"
-                        placeholder="Enter your username, or email">
+                        placeholder="Enter your username, or email" required>
                 </div>
                 <div class="form-group">
                     <label for="password">Password</label>
                     <input type="password" class="form-control" name="password" id="password"
-                        placeholder="Enter your password">
+                        placeholder="Enter your password" required>
                 </div>
                 <div class="form-group text-center">
                     <button type="submit" class="btn btn-primary">Log in</button>
                 </div>
                 <c:if test="${authenticationErrors != null}">
                     <div class="form-group">
-                        <c:forEach items="${authenticationErrors}" var="error">
-                            <small class="text-danger">${error.code}</small>
-                        </c:forEach>
+                        <div class="errors-container">
+                            <c:forEach items="${authenticationErrors}" var="error">
+                                <small class="text-danger">${error.getDefaultMessage()}</small>
+                            </c:forEach>
+                        </div>
+                        
                     </div>
                 </c:if>
                 <!-- <div class="form-group text-center">

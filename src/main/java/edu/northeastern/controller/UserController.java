@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -22,6 +23,7 @@ import edu.northeastern.pojo.Post;
 import edu.northeastern.pojo.User;
 import edu.northeastern.util.RoleEnum;
 import edu.northeastern.util.VisibilityEnum;
+import edu.northeastern.validation.UserValidation;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 
@@ -38,6 +40,9 @@ public class UserController {
 
     @Autowired
     FollowDAO followDAO;
+
+    @Autowired
+    UserValidation userValidation;
 
     @Autowired
     private ResourceLoader resourceLoader;
@@ -73,24 +78,21 @@ public class UserController {
     }
 
     @PostMapping("/profile")
-    public ModelAndView handleProfilePost(@ModelAttribute EditUserForm form, User updateUser, HttpSession session, Errors errors) {
-       //add validations
+    public ModelAndView handleProfilePost(@ModelAttribute EditUserForm form, User updateUser, HttpSession session, BindingResult result) {
         try {
+
+            userValidation.validate(form, result);
+            if(result.hasErrors()) {
+                return new ModelAndView("edit-form", "editUserErrors", result.getAllErrors());
+            }
+
             String name = form.getName();
             String password = form.getPassword();
             String bio = form.getBio();
             String visibility = form.getVisibility();
             User currentUser = (User) session.getAttribute("currentUser");
-            if(bio.length() > 255) {
-                bio = bio.substring(0, 255);
-            }
             if(visibility.isBlank()) {
                 visibility = VisibilityEnum.PUBLIC;
-            }
-
-            if(password.isBlank()) {
-                errors.rejectValue("password", "Password cannot be empty. Please check your inputs.");
-                return new ModelAndView("register-form", "editUserErrors", errors.getFieldErrors());
             }
             
             updateUser.setName(name);
@@ -106,8 +108,7 @@ public class UserController {
             userDAO.updateUser(updateUser, session);
 
             String fileName = currentUser.getUsername() + ".jpg";
-            // Resource resource = resourceLoader.getResource("classpath:/static/users/");
-            Resource resource = resourceLoader.getResource("/resources/static/users/");
+            Resource resource = resourceLoader.getResource("classpath:/static/users/");
             File staticFolder = resource.getFile();
             String absolutePath = staticFolder.getAbsolutePath();
             String postImageLocation = absolutePath + "\\" + fileName;

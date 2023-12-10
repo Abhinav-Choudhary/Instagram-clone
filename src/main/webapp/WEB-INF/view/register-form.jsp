@@ -50,6 +50,10 @@
         .signup-body {
             margin-top: 6em;
         }
+        .errors-container {
+            display: flex;
+            flex-direction: column;
+        }
     </style>
 </head>
 
@@ -69,22 +73,22 @@
                 <div class="form-group">
                     <label for="email">Email</label>
                     <input type="text" class="form-control" name="email" id="email"
-                        placeholder="Enter your email">
+                        placeholder="Enter your email" required>
                 </div>
                 <div class="form-group">
                     <label for="username">Username</label>
                     <input type="text" class="form-control" name="username" id="username"
-                        placeholder="Enter your username">
+                        placeholder="Enter your username" required>
                 </div>
                 <div class="form-group">
                     <label for="password">Password</label>
                     <input type="password" class="form-control" name="password" id="password"
-                        placeholder="Enter your password">
+                        placeholder="Enter your password" required>
                 </div>
                 <div class="form-group">
                     <label for="bio">Bio</label>
                     <input type="text" class="form-control" name="bio" id="bio"
-                        placeholder="Enter your bio"
+                        placeholder="Enter your bio (max 255 characters)"
                         maxlength="255">
                 </div>
                 <div class="form-group text-center">
@@ -92,9 +96,11 @@
                 </div>
                 <c:if test="${registerErrors != null}">
                     <div class="form-group">
-                        <c:forEach items="${registerErrors}" var="error">
-                            <small class="text-danger">${error.code}</small>
-                        </c:forEach>
+                        <div class="errors-container">
+                            <c:forEach items="${registerErrors}" var="error">
+                                <small class="text-danger">${error.getDefaultMessage()}</small>
+                            </c:forEach>
+                        </div>
                     </div>
                 </c:if>
             </form>
