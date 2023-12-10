@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,10 +16,9 @@ import edu.northeastern.dao.UserDAO;
 import edu.northeastern.model.SearchForm;
 import edu.northeastern.pojo.Post;
 import edu.northeastern.pojo.User;
+import edu.northeastern.validation.SearchValidation;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
-
-
 
 @Controller
 public class SearchController {
@@ -31,6 +31,9 @@ public class SearchController {
 
     @Autowired
     FollowDAO followDAO;
+
+    @Autowired
+    SearchValidation searchValidation;
     
     @GetMapping("/search")
     public ModelAndView handleSearch(HttpSession session, HttpServletRequest request) {
@@ -53,10 +56,22 @@ public class SearchController {
     }
     
     @PostMapping("/search")
-    public ModelAndView postMethodName(@ModelAttribute SearchForm form, User searchedUser, HttpServletRequest request, HttpSession session) {
+    public ModelAndView postMethodName(@ModelAttribute SearchForm form, User searchedUser, HttpServletRequest request, HttpSession session, BindingResult result) {
+        searchValidation.validate(form, result);
+        if(result.hasErrors()) {
+            return new ModelAndView("search-form", "searchErrors", result.getAllErrors());
+        }
+
         searchedUser = userDAO.findByUsernameOrEmail(form.getUsername());
         User currentUser = (User)session.getAttribute("currentUser");
+
+        searchValidation.validateSearchResults(currentUser, searchedUser, result, form);
+        if(result.hasErrors()) {
+            return new ModelAndView("search-form", "searchErrors", result.getAllErrors());
+        }
+
         List<Post> searchedUserPosts = postDAO.findByUserId(searchedUser.getId());
+
         int searchedUserPostCount = searchedUserPosts.size();
         int searchedUserFollowerCount = followDAO.getFollowingCount(searchedUser.getId());
         int searchedUserFollowingCount = followDAO.getFollowersCount(searchedUser.getId());

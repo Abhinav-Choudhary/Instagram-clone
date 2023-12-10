@@ -10,10 +10,8 @@ import org.springframework.web.servlet.ModelAndView;
 import edu.northeastern.dao.LikeDAO;
 import edu.northeastern.dao.PostDAO;
 import edu.northeastern.dao.UserDAO;
-import edu.northeastern.pojo.Post;
 import edu.northeastern.pojo.User;
 import edu.northeastern.pojo.UserPost;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 
 @Controller
@@ -36,15 +34,5 @@ public class GuestController {
         if(currentUser != null) return new ModelAndView("redirect:/home");
         
         return new ModelAndView("guest", "userPosts", userPosts);
-    }
-
-    @GetMapping("login-form")
-    public String handleLoginForm() {
-        return "login-form";
-    }
-
-    @GetMapping("register-form")
-    public String handleRegisterForm() {
-        return "register-form";
     }
 }

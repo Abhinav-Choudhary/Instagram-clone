@@ -2,6 +2,7 @@ package edu.northeastern.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -14,78 +15,67 @@ import edu.northeastern.model.RegisterForm;
 import edu.northeastern.pojo.User;
 import edu.northeastern.util.RoleEnum;
 import edu.northeastern.util.VisibilityEnum;
+import edu.northeastern.validation.AuthValidation;
 import jakarta.servlet.http.HttpSession;
-
-
-
 
 @Controller
 public class AuthController {
     @Autowired
     UserDAO userDAO;
 
-    // @GetMapping("/login")
-    // public ModelAndView handleLogin(User user) {
-    //     List<User> users = userDAO.getAllUsers();
-    //     return new ModelAndView("home", "usersList", users);
-    // }
+    @Autowired
+    AuthValidation validation;
+
     @GetMapping("/login")
     public String handleLogin() {
         return "login-form";
     }
 
     @PostMapping("/login")
-    public ModelAndView handlePostLogin(@ModelAttribute LoginForm form, User checkUser, HttpSession session, Errors errors) {
-        //update HTML to make fields required
-        if(form.getUsername().isBlank() || form.getPassword().isBlank()) {
-            errors.rejectValue("username", "Username and Password cannot be empty.");
-            return new ModelAndView("login-form", "authenticationErrors", errors.getFieldErrors());
+    public ModelAndView handlePostLogin(@ModelAttribute LoginForm form, User checkUser, HttpSession session, BindingResult result, Errors errors) {
+        
+        validation.validateLogin(form, errors);
+
+        if(result.hasErrors()) {
+            return new ModelAndView("login-form", "authenticationErrors", result.getAllErrors());
         }
+
         checkUser.setUsername(form.getUsername());
         checkUser.setPassword(form.getPassword());
         if(userDAO.authenticateUser(checkUser, session)) {
             return new ModelAndView("redirect:/home");
         } else {
-            errors.rejectValue("password", "Username or Passwords don't match. Please check your inputs.");
-            return new ModelAndView("login-form", "authenticationErrors", errors.getFieldErrors());
+            errors.reject("password", "Username or Passwords don't match. Please check your inputs.");
+            return new ModelAndView("login-form", "authenticationErrors", errors.getAllErrors());
         }
     }
     
-    
-
     @GetMapping("/register")
     public ModelAndView handleRegister(User newUser) {
         return new ModelAndView("register-form");
     }
 
     @PostMapping("/register")
-    public ModelAndView handlePostRegister(@ModelAttribute RegisterForm form, User newUser, HttpSession session, Errors errors) {
-        //add validations
-        String username = form.getUsername();
-        String email = form.getEmail();
-        String password = form.getPassword();
+    public ModelAndView handlePostRegister(@ModelAttribute RegisterForm form, User newUser, HttpSession session, BindingResult result, Errors errors) {
 
-        if(username.isBlank() || email.isBlank() || password.isBlank()) {
-            errors.rejectValue("password", "Username, Email, and Password cannot be empty. Please check your inputs.");
-            return new ModelAndView("register-form", "registerErrors", errors.getFieldErrors());
-        }
-        if(username.equals(email)) {
-            errors.rejectValue("email", "Username and Email cannot be the same. Please check your inputs.");
-            return new ModelAndView("register-form", "registerErrors", errors.getFieldErrors());
+        validation.validate(form, result);
+
+        if(result.hasErrors()) {
+            return new ModelAndView("register-form", "registerErrors", result.getAllErrors());
         }
         
         newUser.setName(form.getName());
-        newUser.setEmail(email);
-        newUser.setUsername(username);
-        newUser.setPassword(password);
+        newUser.setEmail(form.getEmail());
+        newUser.setUsername(form.getUsername());
+        newUser.setPassword(form.getPassword());
         newUser.setBio(form.getBio());
         newUser.setRole(RoleEnum.USER);
         newUser.setVisibility(VisibilityEnum.PUBLIC);
 
         String registerResult = userDAO.authenticateAndRegister(newUser, session);
         if(registerResult != null) {
-            errors.rejectValue("username", registerResult);
-            return new ModelAndView("register-form", "registerErrors", errors.getFieldErrors());
+            errors.reject("username", registerResult);
+            return new ModelAndView("register-form", "registerErrors", errors.getAllErrors());
         }
         
         return new ModelAndView("register");

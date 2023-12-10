@@ -236,12 +236,15 @@
                                     <c:otherwise>
                                         <c:forEach items="${searchedUserPosts}" var="post">
                                             <div class="col-4 image-container">
-                                                <img src="/posts/${searchedUser.username}${post.id}.jpg"
-                                                    alt="Profile Post" width="100%">
-                                                <div class="image-overlay">
-                                                    <p>${post.description}</p>
-                                                    <p>${post.location}</p>
-                                                </div>
+                                                <a href="post_${post.id}">
+                                                    <img src="/posts/${searchedUser.username}${post.id}.jpg"
+                                                        alt="Profile Post" width="100%">
+                                                    <div class="image-overlay">
+                                                        <p>${post.description}</p>
+                                                        <p>${post.location}</p>
+                                                    </div>
+                                                </a>
+                                                
                                             </div>
                                         </c:forEach>
                                     </c:otherwise>

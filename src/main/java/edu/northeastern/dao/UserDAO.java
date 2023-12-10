@@ -25,7 +25,6 @@ public class UserDAO {
         String username = user.getUsername();
         String password = user.getPassword();
         User queryUser = findByUsernameOrEmail(username);
-        System.out.println(queryUser.getUsername());
 
         if(queryUser != null) {
             if(queryUser.getPassword().equals(password)) {
@@ -43,10 +42,6 @@ public class UserDAO {
         query.setParameter("visibility", VisibilityEnum.PUBLIC);
         List<User> users = query.getResultList();
         return users;
-    }
-
-    public void getFollowedUsers(User user) {
-        //get users who followed user
     }
 
     public String authenticateAndRegister(User newUser, HttpSession session) {

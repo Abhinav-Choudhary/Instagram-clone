@@ -66,10 +66,9 @@
                         <div class="form-container p-3">
                             <div class="border border-secondary rounded-3 p-3 signup-body">
                                 <div>
-                                    <!-- src="/posts/${post.postimagename}" -->
                                     <strong>${post.username}</strong>
                                     <img 
-                                    src="/postimages/${post.postimagename}"
+                                    src="/posts/${post.postimagename}"
                                     width="100%"/>
                                     <p>${post.description}</p>
                                     <p>${post.location}</p>
