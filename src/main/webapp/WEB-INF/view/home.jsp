@@ -36,6 +36,14 @@
                 cursor: pointer;
                 color: black;
             }
+            .following-post {
+                display: flex;
+                justify-content: space-between;
+            }
+            .nav-buttons {
+                    display: flex;
+                    align-items: center;
+            }
         </style>
     </head>
     <body>
@@ -48,7 +56,7 @@
                     <div class="center-nav-buttons">
                         <div class="row mt-3">
                             <div class="d-flex align-items-center navigation">
-                                <a class="btn btn-outline-dark" href="/home">
+                                <a class="btn btn-outline-primary nav-buttons" href="/home">
                                     <i class="fas fa-home fa-2x me-2" aria-hidden="true"></i>
                                     <span>Home</span>
                                 </a>
@@ -56,7 +64,7 @@
                         </div>
                         <div class="row mt-3">
                             <div class="d-flex align-items-center navigation">
-                                <a class="btn btn-outline-dark" href="search">
+                                <a class="btn btn-outline-dark nav-buttons" href="search">
                                     <i class="fa-solid fa-magnifying-glass fa-2x me-2" aria-hidden="true"></i>
                                     <span>Search</span>
                                 </a>
@@ -64,7 +72,7 @@
                         </div>
                         <div class="row mt-3">
                             <div class="d-flex align-items-center navigation">
-                                <a class="btn btn-outline-dark" href="create">
+                                <a class="btn btn-outline-dark nav-buttons" href="create">
                                     <i class="fa-regular fa-square-plus fa-2x me-2" aria-hidden="true"></i>
                                     <span>Create</span>
                                 </a>
@@ -72,16 +80,23 @@
                         </div>
                         <div class="row mt-3">
                             <div class="d-flex align-items-center navigation">
-                                <a class="btn btn-outline-dark" href="profile">
+                                <a class="btn btn-outline-dark nav-buttons" href="profile">
                                     <i class="fa-solid fa-user fa-2x me-2" aria-hidden="true"></i>
-                                    <span>Profile</span>
+                                    <c:choose>
+                                            <c:when test="${sessionScope.currentUser != null}">
+                                                <span>${sessionScope.currentUser.username}</span>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <span>Profile</span>
+                                            </c:otherwise>
+                                        </c:choose>
                                 </a>
                             </div>
                         </div>
                         <c:if test="${currentUser.role == 'ADMIN'}">
                             <div class="row mt-3">
                                 <div class="d-flex align-items-center navigation">
-                                    <a class="btn btn-outline-dark" href="admin">
+                                    <a class="btn btn-outline-dark nav-buttons" href="admin">
                                         <i class="fa-solid fa-user-gear fa-2x me-2" aria-hidden="true"></i>
                                         <span>Admin</span>
                                     </a>
@@ -90,7 +105,7 @@
                         </c:if>
                         <div class="row mt-3">
                             <div class="d-flex align-items-center navigation">
-                                <a class="btn btn-outline-dark" href="logout">
+                                <a class="btn btn-outline-dark nav-buttons" href="logout">
                                     <i class="fa-solid fa-arrow-right-to-bracket fa-2x me-2" aria-hidden="true"></i>
                                     <span>Logout</span>
                                 </a>
@@ -100,6 +115,29 @@
                 </div>
                 <div class="col-1 border-end border-2 border-secondary"></div>
                 <div class="col-9 scrollable-col">
+                    <c:if test="${followingPosts != null}">
+                        <c:forEach items="${followingPosts}" var="post">
+                            <div class="form-container p-3">
+                                <div class="border border-secondary rounded-3 p-3 signup-body">
+                                    <div>
+                                        <div class="following-post">
+                                            <strong>${post.username}</strong>
+                                            <i class="fa-solid fa-star" style="color: #1f64db;"></i>
+                                        </div>
+                                        <img 
+                                        src="/posts/${post.postimagename}"
+                                        width="100%"/>
+                                        <p>${post.description}</p>
+                                        <p>${post.location}</p>
+                                        <p><strong>Created</strong> ${post.createdAt}</p>
+                                        <div class="like-comment-container">
+                                            <a class="like-comment-comment" href="post_${post.postid}"><i class="fa-solid fa-circle-plus"></i> View Post</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </c:forEach>
+                    </c:if>
                     <c:forEach items="${userPosts}" var="post">
                         <div class="form-container p-3">
                             <div class="border border-secondary rounded-3 p-3 signup-body">

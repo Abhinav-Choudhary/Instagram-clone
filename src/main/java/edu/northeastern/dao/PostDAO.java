@@ -11,6 +11,7 @@ import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import edu.northeastern.pojo.Follow;
 import edu.northeastern.pojo.Post;
 import edu.northeastern.pojo.User;
 import edu.northeastern.pojo.UserPost;
@@ -31,10 +32,15 @@ public class PostDAO {
     }
 
     public List<Post> getAllPosts() {
-        String hql = "FROM post";
-        Query<Post> query = DAO.getSessionFactory().openSession().createQuery(hql);
-        List<Post> posts = query.getResultList();
-        return posts;
+        try {
+            String hql = "FROM post";
+            Query<Post> query = DAO.getSessionFactory().openSession().createQuery(hql);
+            List<Post> posts = query.getResultList();
+            return posts;
+        } catch(NoResultException e) {
+            return null;
+        }
+        
     }
 
     public void updatePost(Post updatePost) {
@@ -112,25 +118,48 @@ public class PostDAO {
     }
 
     public List<Post> getAllPublicPosts() {
-        List<User> publicUsers = userDAO.getPublicUsers();
-        List<Integer> publicUserIds = new ArrayList<>();
-        for(User u: publicUsers) {
-            publicUserIds.add(u.getId());
+        try {
+            List<User> publicUsers = userDAO.getPublicUsers();
+            List<Integer> publicUserIds = new ArrayList<>();
+            for(User u: publicUsers) {
+                publicUserIds.add(u.getId());
+            }
+            String hql = "FROM post WHERE userid IN (:userids)";
+            Query<Post> query = DAO.getSessionFactory().openSession().createQuery(hql);
+            query.setParameterList("userids", publicUserIds);
+            return query.getResultList();
+        } catch(NoResultException e) {
+            return null;
         }
-        String hql = "FROM post WHERE userid IN (:userids)";
-        Query<Post> query = DAO.getSessionFactory().openSession().createQuery(hql);
-        query.setParameterList("userids", publicUserIds);
-        return query.getResultList();
+        
     }
 
-    public List<Post> getPostsFromListUsers(List<User> publicUsers) {
-        List<Integer> publicUserIds = new ArrayList<>();
-        for(User u: publicUsers) {
-            publicUserIds.add(u.getId());
+    public List<Post> getPostsFromListUsers(List<User> Users) {
+        try {
+            List<Integer> UserIds = new ArrayList<>();
+            for(User u: Users) {
+                UserIds.add(u.getId());
+            }
+            String hql = "FROM post WHERE userid IN (:userids)";
+            Query<Post> query = DAO.getSessionFactory().openSession().createQuery(hql);
+            query.setParameterList("userids", UserIds);
+            return query.getResultList();
+        } catch(NoResultException e) {
+            return null;
         }
-        String hql = "FROM post WHERE userid IN (:userids)";
-        Query<Post> query = DAO.getSessionFactory().openSession().createQuery(hql);
-        query.setParameterList("userids", publicUserIds);
-        return query.getResultList();
+        
+    }
+
+    public List<UserPost> getFormattedPostFromFollowUsers(List<Follow> followUsers) {
+        try {
+            List<Integer> userIds = new ArrayList<>();
+            for(Follow follow : followUsers) {
+                userIds.add(follow.getFollowingid());
+            }
+            List<User> followingUsers = userDAO.getUsersFromListUserIds(userIds);
+            return getAllUserPostMapping(followingUsers);
+        } catch(NoResultException e) {
+            return null;
+        }
     }
 }

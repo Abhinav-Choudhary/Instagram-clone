@@ -9,6 +9,7 @@ import org.hibernate.cfg.Environment;
 import org.hibernate.service.ServiceRegistry;
 
 import edu.northeastern.pojo.Comment;
+import edu.northeastern.pojo.Follow;
 import edu.northeastern.pojo.Like;
 import edu.northeastern.pojo.Post;
 import edu.northeastern.pojo.User;
@@ -33,7 +34,7 @@ public class DAO {
                 configuration.setProperties(settings);
                 configuration.addPackage("edu.northeastern.pojo");
                 configuration.addAnnotatedClass(User.class).addAnnotatedClass(Post.class)
-                .addAnnotatedClass(Comment.class).addAnnotatedClass(Like.class);
+                .addAnnotatedClass(Comment.class).addAnnotatedClass(Like.class).addAnnotatedClass(Follow.class);
 
                 ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder().applySettings(configuration.getProperties()).build();
 

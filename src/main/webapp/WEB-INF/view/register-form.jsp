@@ -81,11 +81,6 @@
                     <input type="password" class="form-control" name="password" id="password"
                         placeholder="Enter your password">
                 </div>
-                <!-- <div class="form-group">
-                    <label for="mobile">Mobile Number</label>
-                    <input type="text" class="form-control" name="mobile" id="mobile"
-                        placeholder="Enter your mobile number">
-                </div> -->
                 <div class="form-group">
                     <label for="bio">Bio</label>
                     <input type="text" class="form-control" name="bio" id="bio"

@@ -36,6 +36,10 @@
                 cursor: pointer;
                 color: black;
             }
+            .nav-buttons {
+                    display: flex;
+                    align-items: center;
+            }
         </style>
     </head>
     <body>
@@ -46,41 +50,9 @@
                         <img src="https://i.imgur.com/zqpwkLQ.png" alt="instagram logo" >
                     </div>
                     <div class="center-nav-buttons">
-                        <!-- <div class="row mt-3">
-                            <div class="d-flex align-items-center navigation">
-                                <a class="btn btn-outline-dark disabled" href="home.htm">
-                                    <i class="fas fa-home fa-2x me-2" aria-hidden="true"></i>
-                                    <span>Home</span>
-                                </a>
-                            </div>
-                        </div>
                         <div class="row mt-3">
                             <div class="d-flex align-items-center navigation">
-                                <a class="btn btn-outline-dark disabled" href="search.htm">
-                                    <i class="fa-solid fa-magnifying-glass fa-2x me-2" aria-hidden="true"></i>
-                                    <span>Search</span>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="row mt-3">
-                            <div class="d-flex align-items-center navigation">
-                                <a class="btn btn-outline-dark disabled" href="create.htm">
-                                    <i class="fa-regular fa-square-plus fa-2x me-2" aria-hidden="true"></i>
-                                    <span>Create</span>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="row mt-3">
-                            <div class="d-flex align-items-center navigation">
-                                <a class="btn btn-outline-dark disabled" href="profile.htm">
-                                    <i class="fa-solid fa-user fa-2x me-2" aria-hidden="true"></i>
-                                    <span>Profile</span>
-                                </a>
-                            </div>
-                        </div> -->
-                        <div class="row mt-3">
-                            <div class="d-flex align-items-center navigation">
-                                <a class="btn btn-outline-dark" href="login">
+                                <a class="btn btn-outline-dark nav-buttons" href="login">
                                     <i class="fa-solid fa-arrow-right-to-bracket fa-2x me-2" aria-hidden="true"></i>
                                     <span>Login</span>
                                 </a>
@@ -94,9 +66,10 @@
                         <div class="form-container p-3">
                             <div class="border border-secondary rounded-3 p-3 signup-body">
                                 <div>
+                                    <!-- src="/posts/${post.postimagename}" -->
                                     <strong>${post.username}</strong>
                                     <img 
-                                    src="/posts/${post.postimagename}"
+                                    src="/postimages/${post.postimagename}"
                                     width="100%"/>
                                     <p>${post.description}</p>
                                     <p>${post.location}</p>

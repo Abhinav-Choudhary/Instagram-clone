@@ -48,13 +48,19 @@
                     cursor: pointer;
                     color: black;
                 }
+
                 .like-post:hover {
                     color: red;
                 }
+
                 .guest-go-home {
                     display: flex;
                     justify-content: end;
                     margin-top: 1em;
+                }
+                .nav-buttons {
+                    display: flex;
+                    align-items: center;
                 }
             </style>
         </head>
@@ -71,7 +77,7 @@
                                 <c:when test="${sessionScope.currentUser != null}">
                                     <div class="row mt-3">
                                         <div class="d-flex align-items-center navigation">
-                                            <a class="btn btn-outline-dark" href="home">
+                                            <a class="btn btn-outline-dark nav-buttons" href="home">
                                                 <i class="fas fa-home fa-2x me-2" aria-hidden="true"></i>
                                                 <span>Home</span>
                                             </a>
@@ -79,7 +85,7 @@
                                     </div>
                                     <div class="row mt-3">
                                         <div class="d-flex align-items-center navigation">
-                                            <a class="btn btn-outline-dark" href="search">
+                                            <a class="btn btn-outline-dark nav-buttons" href="search">
                                                 <i class="fa-solid fa-magnifying-glass fa-2x me-2"
                                                     aria-hidden="true"></i>
                                                 <span>Search</span>
@@ -88,7 +94,7 @@
                                     </div>
                                     <div class="row mt-3">
                                         <div class="d-flex align-items-center navigation">
-                                            <a class="btn btn-outline-dark" href="create">
+                                            <a class="btn btn-outline-dark nav-buttons" href="create">
                                                 <i class="fa-regular fa-square-plus fa-2x me-2" aria-hidden="true"></i>
                                                 <span>Create</span>
                                             </a>
@@ -96,16 +102,23 @@
                                     </div>
                                     <div class="row mt-3">
                                         <div class="d-flex align-items-center navigation">
-                                            <a class="btn btn-outline-dark" href="profile">
+                                            <a class="btn btn-outline-dark nav-buttons" href="profile">
                                                 <i class="fa-solid fa-user fa-2x me-2" aria-hidden="true"></i>
-                                                <span>Profile</span>
+                                                <c:choose>
+                                                    <c:when test="${sessionScope.currentUser != null}">
+                                                        <span>${sessionScope.currentUser.username}</span>
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <span>Profile</span>
+                                                    </c:otherwise>
+                                                </c:choose>
                                             </a>
                                         </div>
                                     </div>
                                     <c:if test="${currentUser.role == 'ADMIN'}">
                                         <div class="row mt-3">
                                             <div class="d-flex align-items-center navigation">
-                                                <a class="btn btn-outline-dark" href="admin">
+                                                <a class="btn btn-outline-dark nav-buttons" href="admin">
                                                     <i class="fa-solid fa-user-gear fa-2x me-2" aria-hidden="true"></i>
                                                     <span>Admin</span>
                                                 </a>
@@ -114,7 +127,7 @@
                                     </c:if>
                                     <div class="row mt-3">
                                         <div class="d-flex align-items-center navigation">
-                                            <a class="btn btn-outline-dark" href="logout">
+                                            <a class="btn btn-outline-dark nav-buttons" href="logout">
                                                 <i class="fa-solid fa-arrow-right-to-bracket fa-2x me-2"
                                                     aria-hidden="true"></i>
                                                 <span>Logout</span>
@@ -125,7 +138,7 @@
                                 <c:otherwise>
                                     <div class="row mt-3">
                                         <div class="d-flex align-items-center navigation">
-                                            <a class="btn btn-outline-dark" href="login">
+                                            <a class="btn btn-outline-dark nav-buttons" href="login">
                                                 <i class="fa-solid fa-arrow-right-to-bracket fa-2x me-2"
                                                     aria-hidden="true"></i>
                                                 <span>Login</span>
@@ -145,7 +158,8 @@
                                         <img src="/posts/${detailedUserPost.postimagename}" width="100%"
                                             alt="Post Image" />
                                         <c:if test="${detailedUserPost.userid == sessionScope.currentUser.id}">
-                                            <a href="confirmdeletepost/${detailedUserPost.postid}/${postDeleteRedirectPath}" class="like-post">
+                                            <a href="confirmdeletepost/${detailedUserPost.postid}/${postDeleteRedirectPath}"
+                                                class="like-post">
                                                 <i class="fa-solid fa-trash fa-2x mt-3" style="color: red;"></i></a>
                                         </c:if>
                                     </div>
@@ -160,10 +174,16 @@
                                                     <p><i class="fa-solid fa-heart"></i> ${likeCount} Likes</p>
                                                 </c:when>
                                                 <c:when test="${currentUserLiked}">
-                                                    <p><a class="like-post" href="like/${detailedUserPost.postid}/${sessionScope.currentUser.id}/post_${detailedUserPost.postid}"><i class="fa-solid fa-heart"></i> ${likeCount} Likes</a></p>
+                                                    <p><a class="like-post"
+                                                            href="like/${detailedUserPost.postid}/${sessionScope.currentUser.id}/post_${detailedUserPost.postid}"><i
+                                                                class="fa-solid fa-heart"></i> ${likeCount} Likes</a>
+                                                    </p>
                                                 </c:when>
                                                 <c:otherwise>
-                                                    <p><a class="like-post" href="like/${detailedUserPost.postid}/${sessionScope.currentUser.id}/post_${detailedUserPost.postid}"><i class="fa-regular fa-heart"></i> ${likeCount} Likes</a></p>
+                                                    <p><a class="like-post"
+                                                            href="like/${detailedUserPost.postid}/${sessionScope.currentUser.id}/post_${detailedUserPost.postid}"><i
+                                                                class="fa-regular fa-heart"></i> ${likeCount} Likes</a>
+                                                    </p>
                                                 </c:otherwise>
                                             </c:choose>
                                         </div>

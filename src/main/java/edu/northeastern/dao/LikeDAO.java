@@ -19,7 +19,6 @@ public class LikeDAO {
         Transaction tx = session.beginTransaction();
         if(currentUserLiked != null) {
             session.remove(currentUserLiked);
-            // session.delete(currentUserLiked);
         } else {
             session.persist(like);
         }
