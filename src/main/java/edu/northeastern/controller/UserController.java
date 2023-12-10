@@ -107,10 +107,13 @@ public class UserController {
 
             String fileName = currentUser.getUsername() + ".jpg";
             // Resource resource = resourceLoader.getResource("classpath:/static/users/");
-            Resource resource = resourceLoader.getResource("/resources/static/users/");
+            Resource resource = resourceLoader.getResource("/src/main/resources/static/users/");
             File staticFolder = resource.getFile();
             String absolutePath = staticFolder.getAbsolutePath();
             String postImageLocation = absolutePath + "\\" + fileName;
+            if(postImageLocation.contains("\\src\\main\\webapp")) {
+                postImageLocation = postImageLocation.replace("\\src\\main\\webapp", "");
+            }
             File photo = new File(postImageLocation);
             updateUser.getProfilepicture().transferTo(photo);
 

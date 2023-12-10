@@ -55,10 +55,11 @@ public class CreateController {
             postDAO.savePost(newPost);
 
             String fileName = currentUser.getUsername() + newPost.getId() + ".jpg";
-            Resource resource = resourceLoader.getResource("classpath:/static/posts/");
-            File staticFolder = resource.getFile();
-            String absolutePath = staticFolder.getAbsolutePath();
-            String postImageLocation = absolutePath + "\\" + fileName;
+            Resource resource = resourceLoader.getResource("/src/main/resources/static/posts/" + fileName);
+            String postImageLocation = resource.getFile().getAbsolutePath();
+            if(postImageLocation.contains("\\src\\main\\webapp")) {
+                postImageLocation = postImageLocation.replace("\\src\\main\\webapp", "");
+            }
             File photo = new File(postImageLocation);
             newPost.getPostimage().transferTo(photo);
 
