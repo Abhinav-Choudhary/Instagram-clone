@@ -1,6 +1,6 @@
 package edu.northeastern.controller;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
@@ -75,8 +75,8 @@ public class PostController {
 
     @PostMapping("/post")
     public ModelAndView handlePostPost(@ModelAttribute PostForm form, Comment comment, HttpSession session) {
-        LocalDate currentDate = LocalDate.now();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMMM dd, yyyy");
+        LocalDateTime currentDate = LocalDateTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMMM dd, yyyy 'at' hh:mma");
         String formattedDate = currentDate.format(formatter);
 
         User currentUser = (User) session.getAttribute("currentUser");

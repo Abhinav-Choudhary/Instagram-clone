@@ -2,14 +2,12 @@ package edu.northeastern.controller;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Controller;
@@ -44,8 +42,8 @@ public class CreateController {
     public ModelAndView handleCreatePost(@ModelAttribute CreateForm form, Post newPost, HttpSession session, Errors errors) {
 
         try {
-            LocalDate currentDate = LocalDate.now();
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMMM dd, yyyy");
+            LocalDateTime currentDate = LocalDateTime.now();
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMMM dd, yyyy 'at' hh:mma");
             String formattedDate = currentDate.format(formatter);
             User currentUser = (User) session.getAttribute("currentUser");
 

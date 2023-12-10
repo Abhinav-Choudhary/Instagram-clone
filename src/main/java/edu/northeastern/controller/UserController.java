@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.servlet.ModelAndView;
 
+import edu.northeastern.dao.FollowDAO;
 import edu.northeastern.dao.PostDAO;
 import edu.northeastern.dao.UserDAO;
 import edu.northeastern.model.EditUserForm;
@@ -36,6 +37,9 @@ public class UserController {
     PostDAO postDAO;
 
     @Autowired
+    FollowDAO followDAO;
+
+    @Autowired
     private ResourceLoader resourceLoader;
     
     @GetMapping("/profile")
@@ -43,6 +47,15 @@ public class UserController {
         User currentUser = (User) session.getAttribute("currentUser");
         List<Post> profilePosts = postDAO.getProfileUserPost(currentUser);
         request.setAttribute("postDeleteRedirectPath", "home");
+
+        int UserPostCount = profilePosts.size();
+        int UserFollowerCount = followDAO.getFollowingCount(currentUser.getId());
+        int UserFollowingCount = followDAO.getFollowersCount(currentUser.getId());
+        request.setAttribute("UserPostCount", UserPostCount);
+        request.setAttribute("UserFollowerCount", UserFollowerCount);
+        request.setAttribute("UserFollowingCount", UserFollowingCount);
+
+
         return new ModelAndView("profile", "profilePosts", profilePosts);
     }
 
