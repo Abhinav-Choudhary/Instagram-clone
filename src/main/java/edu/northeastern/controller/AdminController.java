@@ -30,7 +30,7 @@ public class AdminController {
     public ModelAndView handleAdmin(HttpServletRequest request, HttpSession session) {
 
         boolean checkUser = checkIfUserIsAdmin(session);
-        if(checkUser) {
+        if(!checkUser) {
             return new ModelAndView("redirect:/home");
         }
 

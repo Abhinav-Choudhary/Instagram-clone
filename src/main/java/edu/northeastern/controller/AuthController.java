@@ -1,5 +1,6 @@
 package edu.northeastern.controller;
 
+import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -26,15 +27,18 @@ public class AuthController {
     @Autowired
     AuthValidation validation;
 
+    // @Autowired
+    // StandardPBEStringEncryptor standardPBEStringEncryptor;
+
     @GetMapping("/login")
     public String handleLogin() {
         return "login-form";
     }
 
     @PostMapping("/login")
-    public ModelAndView handlePostLogin(@ModelAttribute LoginForm form, User checkUser, HttpSession session, BindingResult result, Errors errors) {
+    public ModelAndView handlePostLogin(@ModelAttribute LoginForm form, User checkUser, HttpSession session, BindingResult result, Errors errors, StandardPBEStringEncryptor standardPBEStringEncryptor) {
         
-        validation.validateLogin(form, errors);
+        validation.validateLogin(form, result);
 
         if(result.hasErrors()) {
             return new ModelAndView("login-form", "authenticationErrors", result.getAllErrors());
@@ -42,7 +46,7 @@ public class AuthController {
 
         checkUser.setUsername(form.getUsername());
         checkUser.setPassword(form.getPassword());
-        if(userDAO.authenticateUser(checkUser, session)) {
+        if(userDAO.authenticateUser(checkUser, session, standardPBEStringEncryptor)) {
             return new ModelAndView("redirect:/home");
         } else {
             errors.reject("password", "Username or Passwords don't match. Please check your inputs.");
@@ -56,18 +60,23 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ModelAndView handlePostRegister(@ModelAttribute RegisterForm form, User newUser, HttpSession session, BindingResult result, Errors errors) {
+    public ModelAndView handlePostRegister(@ModelAttribute RegisterForm form, User newUser, HttpSession session, BindingResult result, Errors errors, StandardPBEStringEncryptor standardPBEStringEncryptor) {
 
         validation.validate(form, result);
 
         if(result.hasErrors()) {
             return new ModelAndView("register-form", "registerErrors", result.getAllErrors());
         }
+
+        String encryptedPassword = standardPBEStringEncryptor.encrypt(form.getPassword());
+
+        // String decryptedPassword = standardPBEStringEncryptor.decrypt(encryptedPassword);
+        // System.out.println("Decrypted Password: " + decryptedPassword);
         
         newUser.setName(form.getName());
         newUser.setEmail(form.getEmail());
         newUser.setUsername(form.getUsername());
-        newUser.setPassword(form.getPassword());
+        newUser.setPassword(encryptedPassword);
         newUser.setBio(form.getBio());
         newUser.setRole(RoleEnum.USER);
         newUser.setVisibility(VisibilityEnum.PUBLIC);

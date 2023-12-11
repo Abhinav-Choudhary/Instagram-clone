@@ -72,7 +72,7 @@ public class AuthValidation implements Validator {
         Matcher matcher = pattern.matcher(username);
 
         if(!matcher.matches()) {
-            errors.rejectValue("username", "Username only permits Hyphen(-), Underscore(_), and Dot(.)");
+            errors.reject("username", "Username only permits Hyphen(-), Underscore(_), and Dot(.)");
         }
     }
     

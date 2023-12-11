@@ -1,6 +1,5 @@
 package edu.northeastern.dao;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -8,10 +7,10 @@ import java.util.Map;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
+import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
 import org.springframework.stereotype.Repository;
 
 import edu.northeastern.pojo.Follow;
-import edu.northeastern.pojo.Post;
 import edu.northeastern.pojo.User;
 import edu.northeastern.util.RoleEnum;
 import edu.northeastern.util.VisibilityEnum;
@@ -21,13 +20,14 @@ import jakarta.servlet.http.HttpSession;
 @Repository
 public class UserDAO {
 
-    public boolean authenticateUser(User user, HttpSession session) {
+    public boolean authenticateUser(User user, HttpSession session, StandardPBEStringEncryptor standardPBEStringEncryptor) {
         String username = user.getUsername();
         String password = user.getPassword();
         User queryUser = findByUsernameOrEmail(username);
 
         if(queryUser != null) {
-            if(queryUser.getPassword().equals(password)) {
+            String decryptedPasswordQueryUser = standardPBEStringEncryptor.decrypt(queryUser.getPassword());
+            if(decryptedPasswordQueryUser.equals(password)) {
                 session.setAttribute("currentUser", queryUser);
                 return true;
             }
