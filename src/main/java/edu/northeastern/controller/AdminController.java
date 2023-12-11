@@ -29,6 +29,7 @@ public class AdminController {
     @GetMapping("/admin")
     public ModelAndView handleAdmin(HttpServletRequest request, HttpSession session) {
 
+        User currentUser = (User)session.getAttribute("currentUser");
         boolean checkUser = checkIfUserIsAdmin(session);
         if(!checkUser) {
             return new ModelAndView("redirect:/home");
@@ -36,6 +37,7 @@ public class AdminController {
 
         List<User> allUsers = userDAO.getAllUsers();
         List<Post> allPosts = postDAO.getAllPosts();
+        allUsers = userDAO.removeCurrentUserFromAllUsers(currentUser, allUsers);
         request.setAttribute("adminAllUsers", allUsers);
         request.setAttribute("postDeleteRedirectPath", "admin");
         return new ModelAndView("admin", "adminAllPosts", allPosts);
@@ -43,10 +45,10 @@ public class AdminController {
 
     @GetMapping("/makeadmin/{userid}")
     public ModelAndView handleMakeAdmin(@PathVariable String userid, HttpSession session) {
-        boolean checkUser = checkIfUserIsAdmin(session);
-        if(checkUser) {
-            return new ModelAndView("redirect:/home");
-        }
+        // boolean checkUser = checkIfUserIsAdmin(session);
+        // if(checkUser) {
+        //     return new ModelAndView("redirect:/home");
+        // }
 
         User user = userDAO.findById(Integer.parseInt(userid));
         userDAO.makeUserAdmin(user, session);
@@ -55,10 +57,10 @@ public class AdminController {
 
     @GetMapping("/makeuser/{userid}")
     public ModelAndView handleMakeUser(@PathVariable String userid, HttpSession session) {
-        boolean checkUser = checkIfUserIsAdmin(session);
-        if(checkUser) {
-            return new ModelAndView("redirect:/home");
-        }
+        // boolean checkUser = checkIfUserIsAdmin(session);
+        // if(checkUser) {
+        //     return new ModelAndView("redirect:/home");
+        // }
 
         User user = userDAO.findById(Integer.parseInt(userid));
         userDAO.makeUserUser(user, session);
@@ -67,10 +69,10 @@ public class AdminController {
 
     @GetMapping("/deleteuser/{userid}")
     public ModelAndView handleDeleteUser(@PathVariable String userid, HttpSession session) {
-        boolean checkUser = checkIfUserIsAdmin(session);
-        if(checkUser) {
-            return new ModelAndView("redirect:/home");
-        }
+        // boolean checkUser = checkIfUserIsAdmin(session);
+        // if(checkUser) {
+        //     return new ModelAndView("redirect:/home");
+        // }
 
         User user = userDAO.findById(Integer.parseInt(userid));
         userDAO.deleteUser(user);
@@ -79,10 +81,10 @@ public class AdminController {
 
     @GetMapping("/confirmdeleteuser/{userid}")
     public ModelAndView handleConfirmDeleteUser(@PathVariable String userid, HttpSession session) {
-        boolean checkUser = checkIfUserIsAdmin(session);
-        if(checkUser) {
-            return new ModelAndView("redirect:/home");
-        }
+        // boolean checkUser = checkIfUserIsAdmin(session);
+        // if(checkUser) {
+        //     return new ModelAndView("redirect:/home");
+        // }
         return new ModelAndView("delete-user-form", "deleteUserId", userid);
     }
 

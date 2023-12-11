@@ -1,6 +1,7 @@
 package edu.northeastern.dao;
 
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,7 +17,7 @@ import edu.northeastern.pojo.Post;
 import edu.northeastern.pojo.User;
 import edu.northeastern.pojo.UserPost;
 import jakarta.persistence.NoResultException;
-import jakarta.servlet.http.HttpSession;
+// import jakarta.servlet.http.HttpSession;
 
 @Repository
 public class PostDAO {
@@ -31,11 +32,23 @@ public class PostDAO {
         tx.commit();
     }
 
+    public void checkAndSetBase64String(Post post) {
+        if(post.getPostbase64string() == null) {
+            byte[] byteData = post.getPostimagedata();
+            if(byteData != null) {
+                post.setPostbase64string(Base64.getEncoder().encodeToString(post.getPostimagedata()));
+            }
+        }
+    }
+
     public List<Post> getAllPosts() {
         try {
             String hql = "FROM post";
             Query<Post> query = DAO.getSessionFactory().openSession().createQuery(hql);
             List<Post> posts = query.getResultList();
+            for(Post post: posts) {
+                checkAndSetBase64String(post);
+            }
             return posts;
         } catch(NoResultException e) {
             return null;
@@ -63,6 +76,9 @@ public class PostDAO {
             Query<Post> query = DAO.getSessionFactory().openSession().createQuery(hql);
             query.setParameter("userid", userId);
             List<Post> posts = query.getResultList();
+            for(Post post: posts) {
+                checkAndSetBase64String(post);
+            }
             return posts;
         } catch(NoResultException e) {
             return null;
@@ -75,6 +91,7 @@ public class PostDAO {
             Query<Post> query = DAO.getSessionFactory().openSession().createQuery(hql);
             query.setParameter("postid", postId);
             Post post = query.uniqueResult();
+            checkAndSetBase64String(post);
             return post;
         } catch(NoResultException e) {
             return null;
@@ -104,6 +121,15 @@ public class PostDAO {
             userPost.setLocation(post.getLocation());
             userPost.setCreatedAt(post.getCreatedAt());
             userPost.setPostimagename(fileName);
+            String postBase64String = post.getPostbase64string();
+            if(postBase64String == null) {
+                byte[] postByteData = post.getPostimagedata();
+                if( postByteData != null) {
+                    userPost.setBase64string(Base64.getEncoder().encodeToString(postByteData));
+                }
+            } else {
+                userPost.setBase64string(postBase64String);
+            }
 
             userPosts.add(userPost);
         }
@@ -114,7 +140,11 @@ public class PostDAO {
     public List<Post> getProfileUserPost(User currentUser) {
         List<User> currentUserList = new ArrayList<>();
         currentUserList.add(currentUser);
-        return getPostsFromListUsers(currentUserList);
+        List<Post> posts = getPostsFromListUsers(currentUserList);
+        for(Post post: posts) {
+            checkAndSetBase64String(post);
+        }
+        return posts;
     }
 
     public List<Post> getAllPublicPosts() {
@@ -127,7 +157,11 @@ public class PostDAO {
             String hql = "FROM post WHERE userid IN (:userids)";
             Query<Post> query = DAO.getSessionFactory().openSession().createQuery(hql);
             query.setParameterList("userids", publicUserIds);
-            return query.getResultList();
+            List<Post> posts = query.getResultList();
+            for(Post post: posts) {
+                checkAndSetBase64String(post);
+            }
+            return posts;
         } catch(NoResultException e) {
             return null;
         }
@@ -143,7 +177,11 @@ public class PostDAO {
             String hql = "FROM post WHERE userid IN (:userids)";
             Query<Post> query = DAO.getSessionFactory().openSession().createQuery(hql);
             query.setParameterList("userids", UserIds);
-            return query.getResultList();
+            List<Post> posts = query.getResultList();
+            for(Post post: posts) {
+                checkAndSetBase64String(post);
+            }
+            return posts;
         } catch(NoResultException e) {
             return null;
         }

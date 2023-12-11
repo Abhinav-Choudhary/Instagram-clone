@@ -11,6 +11,7 @@ public class UserPost {
     private String createdAt;
     private String username;
     private String postimagename;
+    private String base64string;
 
     public int getPostid() {
         return postid;
@@ -18,6 +19,15 @@ public class UserPost {
     public void setPostid(int postid) {
         this.postid = postid;
     }
+
+    public String getBase64string() {
+        return base64string;
+    }
+
+    public void setBase64string(String base64string) {
+        this.base64string = base64string;
+    }
+
     public int getUserid() {
         return userid;
     }

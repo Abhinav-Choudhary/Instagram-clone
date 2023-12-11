@@ -1,5 +1,7 @@
 package edu.northeastern.dao;
 
+import java.util.ArrayList;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,6 +30,7 @@ public class UserDAO {
         if(queryUser != null) {
             String decryptedPasswordQueryUser = standardPBEStringEncryptor.decrypt(queryUser.getPassword());
             if(decryptedPasswordQueryUser.equals(password)) {
+                checkAndSetBase64String(queryUser);
                 session.setAttribute("currentUser", queryUser);
                 return true;
             }
@@ -36,11 +39,23 @@ public class UserDAO {
         return false;
     }
 
+    public void checkAndSetBase64String(User user) {
+        if(user.getUserbase64string() == null) {
+            byte[] byteData = user.getUserimagedata();
+            if(byteData != null) {
+                user.setUserbase64string(Base64.getEncoder().encodeToString(byteData));
+            }
+        }
+    }
+
     public List<User> getPublicUsers() {
         String hql = "FROM user WHERE visibility = :visibility";
         Query<User> query = DAO.getSessionFactory().openSession().createQuery(hql);
         query.setParameter("visibility", VisibilityEnum.PUBLIC);
         List<User> users = query.getResultList();
+        for(User user: users) {
+            checkAndSetBase64String(user);
+        }
         return users;
     }
 
@@ -66,13 +81,14 @@ public class UserDAO {
         return newUser;
     }
 
-    public void updateUser(User updateUser, HttpSession httpSession) {
+    public void updateUser(User updateUser, HttpSession httpSession, boolean adminRequest) {
         Session session = DAO.getSessionFactory().openSession();
         Transaction tx = session.beginTransaction();
         session.merge(updateUser);
         tx.commit();
         User updatedUser = findById(updateUser.getId());
-        httpSession.setAttribute("currentUser", updatedUser);
+        checkAndSetBase64String(updateUser);
+        if(!adminRequest)   httpSession.setAttribute("currentUser", updatedUser);
     }
 
     public void deleteUser(User user) {
@@ -84,18 +100,21 @@ public class UserDAO {
 
     public void makeUserAdmin(User user, HttpSession session) {
         user.setRole(RoleEnum.ADMIN);
-        updateUser(user, session);
+        updateUser(user, session, true);
     }
 
     public void makeUserUser(User user, HttpSession session) {
         user.setRole(RoleEnum.USER);
-        updateUser(user, session);
+        updateUser(user, session, true);
     }
 
     public List<User> getAllUsers() {
         String hql = "FROM user";
         Query<User> query = DAO.getSessionFactory().openSession().createQuery(hql);
         List<User> users = query.getResultList();
+        for(User user: users) {
+            checkAndSetBase64String(user);
+        }
         return users;
     }
 
@@ -105,6 +124,7 @@ public class UserDAO {
             Query<User> query = DAO.getSessionFactory().openSession().createQuery(hql);
             query.setParameter("id", id);
             User user = (User) query.getSingleResult();
+            checkAndSetBase64String(user);
             return user;
         } catch(NoResultException e) {
             return null;
@@ -117,6 +137,7 @@ public class UserDAO {
             Query<User> query = DAO.getSessionFactory().openSession().createQuery(hql);
             query.setParameter("email", email);
             User user = (User) query.getSingleResult();
+            checkAndSetBase64String(user);
             return user;
         } catch(NoResultException e) {
             return null;
@@ -129,6 +150,7 @@ public class UserDAO {
             Query<User> query = DAO.getSessionFactory().openSession().createQuery(hql);
             query.setParameter("username", username);
             User user = (User) query.getSingleResult();
+            checkAndSetBase64String(user);
             return user;
         } catch(NoResultException e) {
             return null;
@@ -141,6 +163,7 @@ public class UserDAO {
             Query<User> query = DAO.getSessionFactory().openSession().createQuery(hql);
             query.setParameter("username", username).setParameter("email", username);
             User user = (User) query.getSingleResult();
+            checkAndSetBase64String(user);
             return user;
         } catch(NoResultException e) {
             return null;
@@ -152,7 +175,11 @@ public class UserDAO {
             String hql = "FROM user WHERE id IN (:userids)";
             Query<User> query = DAO.getSessionFactory().openSession().createQuery(hql);
             query.setParameterList("userids", userIds);
-            return query.getResultList();
+            List<User> users = query.getResultList();
+            for(User user: users) {
+                checkAndSetBase64String(user);
+            }
+            return users;
         } catch(NoResultException e) {
             return null;
         }
@@ -169,5 +196,16 @@ public class UserDAO {
         users.clear();
         users.addAll(userMap.values());
         return users;
+    }
+
+    public List<User> removeCurrentUserFromAllUsers(User currentUser, List<User> allUsers) {
+        List<User> newUsers = new ArrayList<>();
+        for(User user: allUsers) {
+            if(user.getId() != currentUser.getId()) {
+                newUsers.add(user);
+            }
+        }
+
+        return newUsers;
     }
 }

@@ -2,6 +2,7 @@ package edu.northeastern.controller;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Base64;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,6 +55,11 @@ public class PostController {
         detailedUserPost.setCreatedAt(post.getCreatedAt());
         detailedUserPost.setUsername(user.getUsername());
         detailedUserPost.setPostimagename(user.getUsername() + post.getId() + ".jpg");
+        if(post.getPostbase64string() != null) {
+            detailedUserPost.setBase64string(post.getPostbase64string());
+        } else if(post.getPostimagedata() != null) {
+            detailedUserPost.setBase64string(Base64.getEncoder().encodeToString(post.getPostimagedata()));
+        }
 
         List<PostComment> comments = commentDAO.getFormattedPostComments(Integer.parseInt(postid));
         request.setAttribute("postComments", comments);

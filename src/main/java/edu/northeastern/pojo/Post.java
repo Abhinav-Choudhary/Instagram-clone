@@ -9,6 +9,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Lob;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 
@@ -29,8 +30,41 @@ public class Post {
     private String createdAt;
     private int userid;
 
+    private String filename;
+
+    @Lob
+    @Column(name="postimagedata", columnDefinition = "LONGBLOB")
+    private byte[] postimagedata;
+
     @Transient
     private MultipartFile postimage;
+
+    @Transient
+    private String postbase64string;
+
+    public String getFilename() {
+        return filename;
+    }
+
+    public void setFilename(String filename) {
+        this.filename = filename;
+    }
+
+    public byte[] getPostimagedata() {
+        return postimagedata;
+    }
+
+    public void setPostimagedata(byte[] postimagedata) {
+        this.postimagedata = postimagedata;
+    }
+
+    public String getPostbase64string() {
+        return postbase64string;
+    }
+
+    public void setPostbase64string(String postbase64string) {
+        this.postbase64string = postbase64string;
+    }
     
     public MultipartFile getPostimage() {
         return postimage;

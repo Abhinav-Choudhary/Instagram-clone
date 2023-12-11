@@ -1,18 +1,18 @@
 package edu.northeastern.controller;
 
-import java.io.File;
-import java.io.IOException;
+// import java.io.File;
+// import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Base64;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.ResourceLoader;
+// import org.springframework.core.io.Resource;
+// import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -35,8 +35,8 @@ public class CreateController {
     @Autowired
     CreateValidation createValidation;
 
-    @Autowired
-    private ResourceLoader resourceLoader;
+    // @Autowired
+    // private ResourceLoader resourceLoader;
     
     @GetMapping("/create")
     public String handleCreate() {
@@ -55,25 +55,30 @@ public class CreateController {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMMM dd, yyyy 'at' hh:mma");
             String formattedDate = currentDate.format(formatter);
             User currentUser = (User) session.getAttribute("currentUser");
+            String fileName = currentUser.getUsername() + newPost.getId() + ".jpg";
 
             newPost.setDescription(form.getDescription());
             newPost.setLocation(form.getLocation());
             newPost.setCreatedAt(formattedDate);
             newPost.setUserid(currentUser.getId());
             newPost.setPostimage(form.getPostimage());
+            newPost.setFilename(fileName);
+            newPost.setPostimagedata(form.getPostimage().getBytes());
+            newPost.setPostbase64string(Base64.getEncoder().encodeToString(form.getPostimage().getBytes()));
+
             postDAO.savePost(newPost);
 
-            String fileName = currentUser.getUsername() + newPost.getId() + ".jpg";
-            Resource resource = resourceLoader.getResource("classpath:/static/posts/");
-            File staticFolder = resource.getFile();
-            String absolutePath = staticFolder.getAbsolutePath();
-            String postImageLocation = absolutePath + "\\" + fileName;
-            File photo = new File(postImageLocation);
-            newPost.getPostimage().transferTo(photo);
+            // String fileName = currentUser.getUsername() + newPost.getId() + ".jpg";
+            // Resource resource = resourceLoader.getResource("classpath:/static/posts/");
+            // File staticFolder = resource.getFile();
+            // String absolutePath = staticFolder.getAbsolutePath();
+            // String postImageLocation = absolutePath + "\\" + fileName;
+            // File photo = new File(postImageLocation);
+            // newPost.getPostimage().transferTo(photo);
 
             session.setAttribute("newPost", newPost);
             return new ModelAndView("create-success", "postImageName", fileName);
-        } catch(IOException e) {
+        } catch(Exception e) {
             Logger.getLogger(CreateController.class.getName()).log(Level.SEVERE, null, e);
         }
         return new ModelAndView("create-error");
