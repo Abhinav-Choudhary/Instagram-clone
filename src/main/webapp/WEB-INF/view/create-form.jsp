@@ -85,7 +85,7 @@
                 <c:if test="${createErrors != null}">
                     <div class="form-group">
                         <c:forEach items="${createErrors}" var="error">
-                            <small class="text-danger">${error.code}</small>
+                            <small class="text-danger">${error.getDefaultMessage()}</small>
                         </c:forEach>
                     </div>
                 </c:if>
