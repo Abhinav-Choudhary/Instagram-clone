@@ -61,6 +61,7 @@
                 .image-container {
                     position: relative;
                     overflow: hidden;
+                    padding: 5px;
                 }
 
                 .image-container img {
