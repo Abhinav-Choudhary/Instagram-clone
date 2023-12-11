@@ -36,6 +36,9 @@ public class HomeController {
     @GetMapping("/home")
     public ModelAndView handleHome(HttpServletRequest request, HttpSession session) {
         User currentUser = (User)session.getAttribute("currentUser");
+
+        if(currentUser == null) return new ModelAndView("redirect:/");
+        
         List<Follow> listFollow = followDAO.getFollowers(currentUser.getId());
         List<UserPost> followingPosts = postDAO.getFormattedPostFromFollowUsers(listFollow);
         List<User> publicUsers = userDAO.getPublicUsers();

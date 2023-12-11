@@ -2,6 +2,8 @@ package edu.northeastern.validation;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
@@ -39,6 +41,8 @@ public class SearchValidation implements Validator {
         if(form.getUsername().isBlank()) {
             errors.reject("username", "Username or Email cannot be empty. Please check your inputs.");
         }
+
+        validateSpecialCharacters(errors, form.getUsername());
     }
 
     public void validateSearchResults(User currentUser, User searchedUser, Errors errors, SearchForm form) {
@@ -49,6 +53,15 @@ public class SearchValidation implements Validator {
             errors.reject("username", "User not found");
         } else if(currentUser.getRole().equals(RoleEnum.USER) && searchedUser.getRole().equals(RoleEnum.ADMIN)) {
             errors.reject("username", "User not found");
+        }
+    }
+
+    public void validateSpecialCharacters(Errors errors, String username) {
+        Pattern pattern = Pattern.compile("^[a-zA-Z0-9\\-_.\\s]+$");
+        Matcher matcher = pattern.matcher(username);
+
+        if(!matcher.matches()) {
+            errors.rejectValue("username", "Username only permits Hyphen(-), Underscore(_), and Dot(.)");
         }
     }
     

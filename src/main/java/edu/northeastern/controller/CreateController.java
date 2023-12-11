@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -21,6 +22,7 @@ import edu.northeastern.dao.PostDAO;
 import edu.northeastern.model.CreateForm;
 import edu.northeastern.pojo.Post;
 import edu.northeastern.pojo.User;
+import edu.northeastern.validation.CreateValidation;
 import jakarta.servlet.http.HttpSession;
 
 
@@ -31,6 +33,9 @@ public class CreateController {
     PostDAO postDAO;
 
     @Autowired
+    CreateValidation createValidation;
+
+    @Autowired
     private ResourceLoader resourceLoader;
     
     @GetMapping("/create")
@@ -39,9 +44,13 @@ public class CreateController {
     }
 
     @PostMapping("/create")
-    public ModelAndView handleCreatePost(@ModelAttribute CreateForm form, Post newPost, HttpSession session, Errors errors) {
+    public ModelAndView handleCreatePost(@ModelAttribute CreateForm form, Post newPost, HttpSession session, BindingResult result) {
 
         try {
+            createValidation.validate(form, result);
+            if(result.hasErrors()) {
+                return new ModelAndView("create-form", "createErrors", result.getAllErrors());
+            }
             LocalDateTime currentDate = LocalDateTime.now();
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMMM dd, yyyy 'at' hh:mma");
             String formattedDate = currentDate.format(formatter);
