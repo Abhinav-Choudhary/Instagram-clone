@@ -155,7 +155,7 @@
                             <div class="border border-secondary rounded-3 p-3 signup-body h-100">
                                 <div class="row h-50">
                                     <div class="col-6">
-                                        <img src="/posts/${detailedUserPost.postimagename}" width="100%"
+                                        <img src="data:image/jpeg;base64,${detailedUserPost.base64string}" width="100%"
                                             alt="Post Image" />
                                         <c:if test="${detailedUserPost.userid == sessionScope.currentUser.id}">
                                             <a href="confirmdeletepost/${detailedUserPost.postid}/${postDeleteRedirectPath}"

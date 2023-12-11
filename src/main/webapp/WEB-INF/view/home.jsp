@@ -125,7 +125,7 @@
                                             <i class="fa-solid fa-star" style="color: #1f64db;"></i>
                                         </div>
                                         <img 
-                                        src="/posts/${post.postimagename}"
+                                        src="data:image/jpeg;base64,${post.base64string}"
                                         width="100%"/>
                                         <p>${post.description}</p>
                                         <p>${post.location}</p>
@@ -144,7 +144,7 @@
                                 <div>
                                     <strong>${post.username}</strong>
                                     <img 
-                                    src="/posts/${post.postimagename}"
+                                    src="data:image/jpeg;base64,${post.base64string}"
                                     width="100%"/>
                                     <p>${post.description}</p>
                                     <p>${post.location}</p>

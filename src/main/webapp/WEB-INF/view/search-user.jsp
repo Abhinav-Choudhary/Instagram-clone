@@ -174,7 +174,7 @@
                     <div class="col-9 scrollable-col">
                         <div class="row mt-3 border-bottom">
                             <div class="col-4 profile-pic-container">
-                                <img src="/users/${sessionScope.searchedUser.username}.jpg" alt="Profile Picture"
+                                <img src="data:image/jpeg;base64,${sessionScope.searchedUser.userbase64string}" alt="Profile Picture"
                                     width="100%" class="profile-pic img-thumbnail"
                                     onerror="this.src='/default/user.png'; this.alt='Default Profile Picture';">
                             </div>
@@ -238,7 +238,7 @@
                                         <c:forEach items="${searchedUserPosts}" var="post">
                                             <div class="col-4 image-container">
                                                 <a href="post_${post.id}">
-                                                    <img src="/posts/${searchedUser.username}${post.id}.jpg"
+                                                    <img src="data:image/jpeg;base64,${post.postbase64string}"
                                                         alt="Profile Post" width="100%">
                                                     <div class="image-overlay">
                                                         <p>${post.description}</p>

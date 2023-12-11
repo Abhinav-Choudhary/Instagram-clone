@@ -63,7 +63,7 @@
             <div>
                 <strong>${sessionScope.currentUser.username}</strong>
                 <img
-                src="/posts/${postImageName}"
+                src="data:image/jpeg;base64,${newPost.postbase64string}"
                 alt="Post Image"
                 width="100%"/>
                 <p>${sessionScope.newPost.description}</p>

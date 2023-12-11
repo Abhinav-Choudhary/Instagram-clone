@@ -1,15 +1,15 @@
 package edu.northeastern.controller;
 
-import java.io.File;
+// import java.io.File;
 import java.io.IOException;
+import java.util.Base64;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.ResourceLoader;
+// import org.springframework.core.io.Resource;
+// import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,7 +21,6 @@ import edu.northeastern.dao.UserDAO;
 import edu.northeastern.model.EditUserForm;
 import edu.northeastern.pojo.Post;
 import edu.northeastern.pojo.User;
-import edu.northeastern.util.RoleEnum;
 import edu.northeastern.util.VisibilityEnum;
 import edu.northeastern.validation.UserValidation;
 import jakarta.servlet.http.HttpServletRequest;
@@ -44,12 +43,13 @@ public class UserController {
     @Autowired
     UserValidation userValidation;
 
-    @Autowired
-    private ResourceLoader resourceLoader;
+    // @Autowired
+    // private ResourceLoader resourceLoader;
     
     @GetMapping("/profile")
     public ModelAndView handleProfile(HttpSession session, HttpServletRequest request) {
         User currentUser = (User) session.getAttribute("currentUser");
+        userDAO.checkAndSetBase64String(currentUser);
         List<Post> profilePosts = postDAO.getProfileUserPost(currentUser);
         request.setAttribute("postDeleteRedirectPath", "home");
 
@@ -60,7 +60,6 @@ public class UserController {
         request.setAttribute("UserFollowerCount", UserFollowerCount);
         request.setAttribute("UserFollowingCount", UserFollowingCount);
 
-
         return new ModelAndView("profile", "profilePosts", profilePosts);
     }
 
@@ -70,11 +69,21 @@ public class UserController {
     }
 
     @GetMapping("/user_{userid}")
-    public ModelAndView handleShowUser(@PathVariable String userid, HttpServletRequest request) {
+    public ModelAndView handleShowUser(@PathVariable String userid, HttpServletRequest request, HttpSession session) {
         User user = userDAO.findById(Integer.parseInt(userid));
+        userDAO.checkAndSetBase64String(user);
         List<Post> searchedUserPosts = postDAO.findByUserId(user.getId());
-        request.setAttribute("searchedUserPosts", searchedUserPosts);
-        return new ModelAndView("search-user", "searchedUser", user);
+        int searchedUserPostCount = searchedUserPosts.size();
+        int searchedUserFollowerCount = followDAO.getFollowingCount(user.getId());
+        int searchedUserFollowingCount = followDAO.getFollowersCount(user.getId());
+        User currentUser = (User)session.getAttribute("currentUser");
+
+        session.setAttribute("searchedUser", user);
+        request.setAttribute("searchedUserPostCount", searchedUserPostCount);
+        request.setAttribute("searchedUserFollowerCount", searchedUserFollowerCount);
+        request.setAttribute("searchedUserFollowingCount", searchedUserFollowingCount);
+        session.setAttribute("currentUserFollowingUser", followDAO.currentUserFollowingUser(currentUser.getId(), user.getId()));
+        return new ModelAndView("search-user", "searchedUserPosts", searchedUserPosts);
     }
 
     @PostMapping("/profile")
@@ -91,6 +100,7 @@ public class UserController {
             String bio = form.getBio();
             String visibility = form.getVisibility();
             User currentUser = (User) session.getAttribute("currentUser");
+            String fileName = currentUser.getUsername() + ".jpg";
             if(visibility.isBlank()) {
                 visibility = VisibilityEnum.PUBLIC;
             }
@@ -104,21 +114,24 @@ public class UserController {
             updateUser.setVisibility(visibility);
             updateUser.setId(currentUser.getId());
             updateUser.setProfilepicture(form.getProfilepicture());
+            updateUser.setFilename(fileName);
+            updateUser.setUserimagedata(form.getProfilepicture().getBytes());
+            updateUser.setUserbase64string(Base64.getEncoder().encodeToString(form.getProfilepicture().getBytes()));
 
-            userDAO.updateUser(updateUser, session);
+            userDAO.updateUser(updateUser, session, false);
 
-            String fileName = currentUser.getUsername() + ".jpg";
-            Resource resource = resourceLoader.getResource("classpath:/static/users/");
-            File staticFolder = resource.getFile();
-            String absolutePath = staticFolder.getAbsolutePath();
-            String postImageLocation = absolutePath + "\\" + fileName;
-            File photo = new File(postImageLocation);
-            updateUser.getProfilepicture().transferTo(photo);
+            
+            // Resource resource = resourceLoader.getResource("classpath:/static/users/");
+            // File staticFolder = resource.getFile();
+            // String absolutePath = staticFolder.getAbsolutePath();
+            // String postImageLocation = absolutePath + "\\" + fileName;
+            // File photo = new File(postImageLocation);
+            // updateUser.getProfilepicture().transferTo(photo);
 
         } catch (IllegalStateException | IOException e) {
             e.printStackTrace();
         }
         
         return new ModelAndView("redirect:/profile");
-    }   
+    }
 }

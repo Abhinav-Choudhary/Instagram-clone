@@ -9,6 +9,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Lob;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 
@@ -31,9 +32,42 @@ public class User {
     private String bio;
     private String role;
     private String visibility;
+
+    private String filename;
+
+    @Lob
+    @Column(name="userimagedata", columnDefinition = "LONGBLOB")
+    private byte[] userimagedata;
     
     @Transient
     private MultipartFile profilepicture;
+
+    @Transient
+    private String userbase64string;
+
+    public String getFilename() {
+        return filename;
+    }
+
+    public void setFilename(String filename) {
+        this.filename = filename;
+    }
+
+    public byte[] getUserimagedata() {
+        return userimagedata;
+    }
+
+    public void setUserimagedata(byte[] userimagedata) {
+        this.userimagedata = userimagedata;
+    }
+
+    public String getUserbase64string() {
+        return userbase64string;
+    }
+
+    public void setUserbase64string(String userbase64string) {
+        this.userbase64string = userbase64string;
+    }
     
     public MultipartFile getProfilepicture() {
         return profilepicture;
