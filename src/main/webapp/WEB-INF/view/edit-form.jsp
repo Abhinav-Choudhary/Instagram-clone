@@ -96,7 +96,7 @@
                 <div class="form-group">
                     <label for="profilepicture">Profile Picture</label>
                     <input type="file" class="form-control" path="profilepicture" name="profilepicture"
-                                                id="profilepicture" placeholder="Profile Picture" />
+                                                id="profilepicture" placeholder="Profile Picture" accept="image/png, image/jpeg"/>
                 </div>
                 <div class="form-group">
                     <label for="visibility" class="form-label">Visibility</label>

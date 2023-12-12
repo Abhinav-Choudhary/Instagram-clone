@@ -68,11 +68,11 @@ public class AuthValidation implements Validator {
     }
 
     public void validateSpecialCharacters(Errors errors, String username) {
-        Pattern pattern = Pattern.compile("^[a-zA-Z0-9\\-_.\\s]+$");
+        Pattern pattern = Pattern.compile("^[a-zA-Z0-9@_\\-_.\\s]+$");
         Matcher matcher = pattern.matcher(username);
 
         if(!matcher.matches()) {
-            errors.reject("username", "Username only permits Hyphen(-), Underscore(_), and Dot(.)");
+            errors.reject("username", "Username only permits Hyphen(-), Underscore(_), At(@), and Dot(.)");
         }
     }
     

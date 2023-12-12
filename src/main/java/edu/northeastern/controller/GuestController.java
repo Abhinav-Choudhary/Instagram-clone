@@ -26,7 +26,7 @@ public class GuestController {
     LikeDAO likeDAO;
 
     @GetMapping("/")
-    public ModelAndView handleGuestWelcome(HttpSession session) {
+    public ModelAndView handleGuest(HttpSession session) {
         List<User> publicUsers = userDAO.getPublicUsers();
         List<UserPost> userPosts = postDAO.getAllUserPostMapping(publicUsers);
 

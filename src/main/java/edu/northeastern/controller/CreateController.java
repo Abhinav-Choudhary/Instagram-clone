@@ -32,14 +32,19 @@ public class CreateController {
     CreateValidation createValidation;
     
     @GetMapping("/create")
-    public String handleCreate() {
-        return "create-form";
+    public ModelAndView handleCreate(HttpSession session) {
+        User currentUser = (User) session.getAttribute("currentUser");
+        if(currentUser == null) return new ModelAndView("redirect:/");
+
+        return new ModelAndView("create-form");
     }
 
     @PostMapping("/create")
     public ModelAndView handleCreatePost(@ModelAttribute CreateForm form, Post newPost, HttpSession session, BindingResult result) {
-
         try {
+            User currentUser = (User) session.getAttribute("currentUser");
+            if(currentUser == null) return new ModelAndView("redirect:/");
+            
             createValidation.validate(form, result);
             if(result.hasErrors()) {
                 return new ModelAndView("create-form", "createErrors", result.getAllErrors());
@@ -47,7 +52,6 @@ public class CreateController {
             LocalDateTime currentDate = LocalDateTime.now();
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMMM dd, yyyy 'at' hh:mma");
             String formattedDate = currentDate.format(formatter);
-            User currentUser = (User) session.getAttribute("currentUser");
             String fileName = currentUser.getUsername() + newPost.getId() + ".jpg";
 
             newPost.setDescription(form.getDescription());
