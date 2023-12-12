@@ -64,7 +64,7 @@
                 <div class="form-group">
                     <label for="postimage">Post</label>
                     <input type="file" class="form-control" path="postimage" name="postimage"
-                                                id="postimage" placeholder="Post photo"
+                                                id="postimage" placeholder="Post photo" accept="image/png, image/jpeg"
                                                 required />
                 </div>
                 <div class="form-group">

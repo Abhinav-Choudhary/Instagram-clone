@@ -37,10 +37,12 @@ public class SearchController {
     
     @GetMapping("/search")
     public ModelAndView handleSearch(HttpSession session, HttpServletRequest request) {
+        User currentUser = (User) session.getAttribute("currentUser");
+        if(currentUser == null) return new ModelAndView("redirect:/");
+
         String userAlreadyFound = (String) session.getAttribute("UserAlreadyFound");
         if(userAlreadyFound != null && userAlreadyFound.equals("TRUE")) {
             User searchedUser = (User)session.getAttribute("searchedUser");
-            User currentUser = (User)session.getAttribute("currentUser");
             List<Post> searchedUserPosts = postDAO.findByUserId(searchedUser.getId());
             int searchedUserPostCount = searchedUserPosts.size();
             int searchedUserFollowerCount = followDAO.getFollowingCount(searchedUser.getId());
@@ -56,7 +58,7 @@ public class SearchController {
     }
     
     @PostMapping("/search")
-    public ModelAndView postMethodName(@ModelAttribute SearchForm form, User searchedUser, HttpServletRequest request, HttpSession session, BindingResult result) {
+    public ModelAndView handleSearchPost(@ModelAttribute SearchForm form, User searchedUser, HttpServletRequest request, HttpSession session, BindingResult result) {
         searchValidation.validate(form, result);
         if(result.hasErrors()) {
             return new ModelAndView("search-form", "searchErrors", result.getAllErrors());

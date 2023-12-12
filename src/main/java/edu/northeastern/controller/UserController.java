@@ -24,6 +24,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.multipart.MultipartFile;
 
 @Controller
 public class UserController {
@@ -43,6 +44,8 @@ public class UserController {
     @GetMapping("/profile")
     public ModelAndView handleProfile(HttpSession session, HttpServletRequest request) {
         User currentUser = (User) session.getAttribute("currentUser");
+        if(currentUser == null) return new ModelAndView("redirect:/");
+
         userDAO.checkAndSetBase64String(currentUser);
         List<Post> profilePosts = postDAO.getProfileUserPost(currentUser);
         request.setAttribute("postDeleteRedirectPath", "home");
@@ -95,6 +98,7 @@ public class UserController {
             String visibility = form.getVisibility();
             User currentUser = (User) session.getAttribute("currentUser");
             String fileName = currentUser.getUsername() + ".jpg";
+            MultipartFile formFile = form.getProfilepicture();
             if(visibility.isBlank()) {
                 visibility = VisibilityEnum.PUBLIC;
             }
@@ -109,15 +113,19 @@ public class UserController {
             updateUser.setId(currentUser.getId());
             updateUser.setProfilepicture(form.getProfilepicture());
             updateUser.setFilename(fileName);
-            updateUser.setUserimagedata(form.getProfilepicture().getBytes());
             updateUser.setUserbase64string(Base64.getEncoder().encodeToString(form.getProfilepicture().getBytes()));
+
+            if(formFile.isEmpty()) {
+                updateUser.setUserimagedata(currentUser.getUserimagedata());
+            } else {
+                updateUser.setUserimagedata(form.getProfilepicture().getBytes());
+            }
 
             userDAO.updateUser(updateUser, session, false);
 
         } catch (IllegalStateException | IOException e) {
             e.printStackTrace();
         }
-        
         return new ModelAndView("redirect:/profile");
     }
 }
