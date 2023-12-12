@@ -12,7 +12,9 @@ import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import edu.northeastern.pojo.Comment;
 import edu.northeastern.pojo.Follow;
+import edu.northeastern.pojo.Like;
 import edu.northeastern.pojo.Post;
 import edu.northeastern.pojo.User;
 import edu.northeastern.pojo.UserPost;
@@ -24,6 +26,12 @@ public class PostDAO {
 
     @Autowired
     UserDAO userDAO;
+
+    @Autowired
+    CommentDAO commentDAO;
+
+    @Autowired
+    LikeDAO likeDAO;
     
     public void savePost(Post newPost) {
         Session session = DAO.getSessionFactory().openSession();
@@ -64,9 +72,15 @@ public class PostDAO {
     }
 
     public void deletePost(Post post) {
+        List<Comment> comments = commentDAO.getCommentsFromPostId(post.getId());
+        List<Like> likes = likeDAO.getPostLikes(post.getId());
         Session session = DAO.getSessionFactory().openSession();
         Transaction tx = session.beginTransaction();
+
+        for(Comment comment: comments) session.remove(comment);
+        for(Like like: likes) session.refresh(like);
         session.remove(post);
+
         tx.commit();
     }
 
@@ -187,6 +201,21 @@ public class PostDAO {
         }
         
     }
+
+    // public List<Post> getAllPostOfUser(User user) {
+    //     try {
+    //         String hql = "FROM post WHERE userid = :userid";
+    //         Query<Post> query = DAO.getSessionFactory().openSession().createQuery(hql);
+    //         query.setParameter("userid", user.getId());
+    //         List<Post> posts = query.getResultList();
+    //         for(Post post: posts) {
+    //             checkAndSetBase64String(post);
+    //         }
+    //         return posts;
+    //     } catch(NoResultException e) {
+    //         return null;
+    //     }
+    // }
 
     public List<UserPost> getFormattedPostFromFollowUsers(List<Follow> followUsers) {
         try {

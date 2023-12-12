@@ -8,6 +8,7 @@ import org.hibernate.query.Query;
 import org.springframework.stereotype.Repository;
 
 import edu.northeastern.pojo.Like;
+import edu.northeastern.pojo.User;
 import jakarta.persistence.NoResultException;
 
 @Repository
@@ -52,6 +53,18 @@ public class LikeDAO {
             query.setParameter("userid", userid);
             Like like = query.uniqueResult();
             return like;
+        } catch(NoResultException e) {
+            return null;
+        }
+    }
+
+    public List<Like> getAllUserLikes(User user) {
+        try {
+            String hql = "FROM postlikes WHERE userid = :userid";
+            Query<Like> query = DAO.getSessionFactory().openSession().createQuery(hql);
+            query.setParameter("userid", user.getId());
+            List<Like> likes = query.getResultList();
+            return likes;
         } catch(NoResultException e) {
             return null;
         }

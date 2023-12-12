@@ -10,9 +10,13 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import edu.northeastern.pojo.Comment;
 import edu.northeastern.pojo.Follow;
+import edu.northeastern.pojo.Like;
+import edu.northeastern.pojo.Post;
 import edu.northeastern.pojo.User;
 import edu.northeastern.util.RoleEnum;
 import edu.northeastern.util.VisibilityEnum;
@@ -21,6 +25,18 @@ import jakarta.servlet.http.HttpSession;
 
 @Repository
 public class UserDAO {
+
+    // @Autowired
+    // PostDAO postDAO;
+
+    // @Autowired
+    // CommentDAO commentDAO;
+
+    @Autowired
+    LikeDAO likeDAO;
+
+    @Autowired
+    FollowDAO followDAO;
 
     public boolean authenticateUser(User user, HttpSession session, StandardPBEStringEncryptor standardPBEStringEncryptor) {
         String username = user.getUsername();
@@ -91,10 +107,21 @@ public class UserDAO {
         if(!adminRequest)   httpSession.setAttribute("currentUser", updatedUser);
     }
 
-    public void deleteUser(User user) {
+    public void deleteUser(User user, List<Post> posts, List<Comment> comments) {
+        // List<Post> posts = postDAO.getAllPostOfUser(user);
+        // List<Comment> comments = commentDAO.getAllUserComments(user);
+        List<Like> likes = likeDAO.getAllUserLikes(user);
+        List<Follow> follows = followDAO.getAllUserFollowerFollowing(user);
+
         Session session = DAO.getSessionFactory().openSession();
         Transaction tx = session.beginTransaction();
+
+        for(Post post: posts) session.remove(post);
+        for(Comment comment: comments) session.remove(comment);
+        for(Like like: likes) session.remove(like);
+        for(Follow follow: follows) session.remove(follow);
         session.remove(user);
+
         tx.commit();
     }
 

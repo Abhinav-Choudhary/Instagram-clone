@@ -23,7 +23,7 @@ public class DAO {
                 Configuration configuration = new Configuration();
                 Properties settings = new Properties();
                 settings.put(Environment.DRIVER, "com.mysql.cj.jdbc.Driver");
-                settings.put(Environment.URL, "jdbc:mysql://localhost:3306/instagramdb");
+                settings.put(Environment.URL, "jdbc:mysql://localhost:3306/instagramclonedb");
                 settings.put(Environment.USER, "root");
                 settings.put(Environment.PASS, "admin");
                 settings.put(Environment.DIALECT, "org.hibernate.dialect.MySQLDialect");
