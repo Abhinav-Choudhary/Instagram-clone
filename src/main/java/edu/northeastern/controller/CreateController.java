@@ -1,7 +1,5 @@
 package edu.northeastern.controller;
 
-// import java.io.File;
-// import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Base64;
@@ -9,8 +7,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.springframework.beans.factory.annotation.Autowired;
-// import org.springframework.core.io.Resource;
-// import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,9 +30,6 @@ public class CreateController {
 
     @Autowired
     CreateValidation createValidation;
-
-    // @Autowired
-    // private ResourceLoader resourceLoader;
     
     @GetMapping("/create")
     public String handleCreate() {
@@ -68,14 +61,6 @@ public class CreateController {
 
             postDAO.savePost(newPost);
 
-            // String fileName = currentUser.getUsername() + newPost.getId() + ".jpg";
-            // Resource resource = resourceLoader.getResource("classpath:/static/posts/");
-            // File staticFolder = resource.getFile();
-            // String absolutePath = staticFolder.getAbsolutePath();
-            // String postImageLocation = absolutePath + "\\" + fileName;
-            // File photo = new File(postImageLocation);
-            // newPost.getPostimage().transferTo(photo);
-
             session.setAttribute("newPost", newPost);
             return new ModelAndView("create-success", "postImageName", fileName);
         } catch(Exception e) {
@@ -83,6 +68,4 @@ public class CreateController {
         }
         return new ModelAndView("create-error");
     }
-    
-    
 }

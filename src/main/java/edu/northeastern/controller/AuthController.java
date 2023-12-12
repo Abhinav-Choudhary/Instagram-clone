@@ -27,9 +27,6 @@ public class AuthController {
     @Autowired
     AuthValidation validation;
 
-    // @Autowired
-    // StandardPBEStringEncryptor standardPBEStringEncryptor;
-
     @GetMapping("/login")
     public String handleLogin() {
         return "login-form";
@@ -70,9 +67,6 @@ public class AuthController {
 
         String encryptedPassword = standardPBEStringEncryptor.encrypt(form.getPassword());
 
-        // String decryptedPassword = standardPBEStringEncryptor.decrypt(encryptedPassword);
-        // System.out.println("Decrypted Password: " + decryptedPassword);
-        
         newUser.setName(form.getName());
         newUser.setEmail(form.getEmail());
         newUser.setUsername(form.getUsername());

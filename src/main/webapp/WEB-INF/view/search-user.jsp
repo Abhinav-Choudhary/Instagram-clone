@@ -155,7 +155,7 @@
                                     <div class="d-flex align-items-center navigation">
                                         <a class="btn btn-outline-dark nav-buttons" href="admin">
                                             <i class="fa-solid fa-user-gear fa-2x me-2" aria-hidden="true"></i>
-                                            <span>Admin</span>
+                                            <span>Admin Console</span>
                                         </a>
                                     </div>
                                 </div>

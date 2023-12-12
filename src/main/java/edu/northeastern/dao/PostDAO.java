@@ -19,7 +19,6 @@ import edu.northeastern.pojo.Post;
 import edu.northeastern.pojo.User;
 import edu.northeastern.pojo.UserPost;
 import jakarta.persistence.NoResultException;
-// import jakarta.servlet.http.HttpSession;
 
 @Repository
 public class PostDAO {
@@ -201,21 +200,6 @@ public class PostDAO {
         }
         
     }
-
-    // public List<Post> getAllPostOfUser(User user) {
-    //     try {
-    //         String hql = "FROM post WHERE userid = :userid";
-    //         Query<Post> query = DAO.getSessionFactory().openSession().createQuery(hql);
-    //         query.setParameter("userid", user.getId());
-    //         List<Post> posts = query.getResultList();
-    //         for(Post post: posts) {
-    //             checkAndSetBase64String(post);
-    //         }
-    //         return posts;
-    //     } catch(NoResultException e) {
-    //         return null;
-    //     }
-    // }
 
     public List<UserPost> getFormattedPostFromFollowUsers(List<Follow> followUsers) {
         try {

@@ -1,13 +1,10 @@
 package edu.northeastern.controller;
 
-// import java.io.File;
 import java.io.IOException;
 import java.util.Base64;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-// import org.springframework.core.io.Resource;
-// import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -42,9 +39,6 @@ public class UserController {
 
     @Autowired
     UserValidation userValidation;
-
-    // @Autowired
-    // private ResourceLoader resourceLoader;
     
     @GetMapping("/profile")
     public ModelAndView handleProfile(HttpSession session, HttpServletRequest request) {
@@ -119,14 +113,6 @@ public class UserController {
             updateUser.setUserbase64string(Base64.getEncoder().encodeToString(form.getProfilepicture().getBytes()));
 
             userDAO.updateUser(updateUser, session, false);
-
-            
-            // Resource resource = resourceLoader.getResource("classpath:/static/users/");
-            // File staticFolder = resource.getFile();
-            // String absolutePath = staticFolder.getAbsolutePath();
-            // String postImageLocation = absolutePath + "\\" + fileName;
-            // File photo = new File(postImageLocation);
-            // updateUser.getProfilepicture().transferTo(photo);
 
         } catch (IllegalStateException | IOException e) {
             e.printStackTrace();
