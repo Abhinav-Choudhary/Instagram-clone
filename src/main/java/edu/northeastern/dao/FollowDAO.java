@@ -8,6 +8,7 @@ import org.hibernate.query.Query;
 import org.springframework.stereotype.Repository;
 
 import edu.northeastern.pojo.Follow;
+import edu.northeastern.pojo.User;
 import jakarta.persistence.NoResultException;
 @Repository
 public class FollowDAO {
@@ -55,6 +56,19 @@ public class FollowDAO {
             query.setParameter("followingid", followingid);
             Follow follow = query.getSingleResult();
             return follow;
+        } catch(NoResultException e) {
+            return null;
+        }
+    }
+
+    public List<Follow> getAllUserFollowerFollowing(User user) {
+        try {
+            String hql = "FROM follow WHERE followerid = :followerid OR followingid = :followingid";
+            Query<Follow> query = DAO.getSessionFactory().openSession().createQuery(hql);
+            query.setParameter("followerid", user.getId());
+            query.setParameter("followingid", user.getId());
+            List<Follow> follows = query.getResultList();
+            return follows;
         } catch(NoResultException e) {
             return null;
         }

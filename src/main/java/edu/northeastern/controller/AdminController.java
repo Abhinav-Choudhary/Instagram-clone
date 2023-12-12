@@ -8,8 +8,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.servlet.ModelAndView;
 
+import edu.northeastern.dao.CommentDAO;
 import edu.northeastern.dao.PostDAO;
 import edu.northeastern.dao.UserDAO;
+import edu.northeastern.pojo.Comment;
 import edu.northeastern.pojo.Post;
 import edu.northeastern.pojo.User;
 import edu.northeastern.util.RoleEnum;
@@ -68,14 +70,16 @@ public class AdminController {
     }
 
     @GetMapping("/deleteuser/{userid}")
-    public ModelAndView handleDeleteUser(@PathVariable String userid, HttpSession session) {
+    public ModelAndView handleDeleteUser(@PathVariable String userid, HttpSession session, CommentDAO commentDAO) {
         // boolean checkUser = checkIfUserIsAdmin(session);
         // if(checkUser) {
         //     return new ModelAndView("redirect:/home");
         // }
 
         User user = userDAO.findById(Integer.parseInt(userid));
-        userDAO.deleteUser(user);
+        List<Post> posts = postDAO.findByUserId(user.getId());
+        List<Comment> comments = commentDAO.getAllUserComments(user);
+        userDAO.deleteUser(user, posts, comments);
         return new ModelAndView("redirect:/admin");
     }
 

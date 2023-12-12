@@ -65,11 +65,12 @@
                 <p class="font-monospace text-secondary">Confirm Post Delete</p>
             </div>
             <div>
+                <p class="font-monospace text-secondary">This action will delete all likes and comments, and it cannot be reversed.</p>
                 <a href="/deletepost/${deletePostId}/${postDeleteRedirectPath}" class="btn btn-primary">Confirm Delete Post</a>
             </div>
         </div>
         <div class="text-center border border-secondary p-3 mt-3">
-            <a href="home" class="btn btn-secondary">Cancel</a>
+            <a href="/home" class="btn btn-secondary">Cancel</a>
         </div>
     </div>
 </body>

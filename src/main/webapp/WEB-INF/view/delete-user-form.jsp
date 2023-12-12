@@ -65,11 +65,12 @@
                 <p class="font-monospace text-secondary">Confirm User Delete</p>
             </div>
             <div>
+                <p class="font-monospace text-secondary">This action will delete all user posts, likes, comments, followings and it cannot be reversed.</p>
                 <a href="/deleteuser/${deleteUserId}" class="btn btn-primary">Confirm Delete User</a>
             </div>
         </div>
         <div class="text-center border border-secondary p-3 mt-3">
-            <a href="home" class="btn btn-secondary">Cancel</a>
+            <a href="/home" class="btn btn-secondary">Cancel</a>
         </div>
     </div>
 </body>
