@@ -38,14 +38,17 @@ public class UserDAO {
         User queryUser = findByUsernameOrEmail(username);
 
         if(queryUser != null) {
-            String decryptedPasswordQueryUser = standardPBEStringEncryptor.decrypt(queryUser.getPassword());
-            if(decryptedPasswordQueryUser.equals(password)) {
-                checkAndSetBase64String(queryUser);
-                session.setAttribute("currentUser", queryUser);
-                return true;
+            try {
+                String decryptedPasswordQueryUser = standardPBEStringEncryptor.decrypt(queryUser.getPassword());
+                if(decryptedPasswordQueryUser.equals(password)) {
+                    checkAndSetBase64String(queryUser);
+                    session.setAttribute("currentUser", queryUser);
+                    return true;
+                }
+            } catch(Exception e) {
+                return false;
             }
         }
-
         return false;
     }
 
@@ -59,14 +62,19 @@ public class UserDAO {
     }
 
     public List<User> getPublicUsers() {
-        String hql = "FROM user WHERE visibility = :visibility";
-        Query<User> query = DAO.getSessionFactory().openSession().createQuery(hql);
-        query.setParameter("visibility", VisibilityEnum.PUBLIC);
-        List<User> users = query.getResultList();
-        for(User user: users) {
-            checkAndSetBase64String(user);
+        try {
+            String hql = "FROM user WHERE visibility = :visibility";
+            Query<User> query = DAO.getSessionFactory().openSession().createQuery(hql);
+            query.setParameter("visibility", VisibilityEnum.PUBLIC);
+            List<User> users = query.getResultList();
+            for(User user: users) {
+                checkAndSetBase64String(user);
+            }
+            return users;
+        } catch(NoResultException e) {
+            return null;
         }
-        return users;
+        
     }
 
     public String authenticateAndRegister(User newUser, HttpSession session) {
@@ -128,13 +136,28 @@ public class UserDAO {
     }
 
     public List<User> getAllUsers() {
-        String hql = "FROM user";
-        Query<User> query = DAO.getSessionFactory().openSession().createQuery(hql);
-        List<User> users = query.getResultList();
-        for(User user: users) {
-            checkAndSetBase64String(user);
+        try {
+            String hql = "FROM user";
+            Query<User> query = DAO.getSessionFactory().openSession().createQuery(hql);
+            List<User> users = query.getResultList();
+            for(User user: users) {
+                checkAndSetBase64String(user);
+            }
+            return users;
+        } catch(NoResultException e) {
+            return null;
         }
-        return users;
+    }
+
+    public User getAdminUser() {
+        try {
+            String hql = "FROM user WHERE role = 'ADMIN'";
+            Query<User> query = DAO.getSessionFactory().openSession().createQuery(hql);
+            List<User> users = query.getResultList();
+            return users.get(0);
+        } catch(NoResultException e) {
+            return null;
+        }   
     }
 
     public User findById(int id) {
