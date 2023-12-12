@@ -47,11 +47,6 @@ public class AdminController {
 
     @GetMapping("/makeadmin/{userid}")
     public ModelAndView handleMakeAdmin(@PathVariable String userid, HttpSession session) {
-        // boolean checkUser = checkIfUserIsAdmin(session);
-        // if(checkUser) {
-        //     return new ModelAndView("redirect:/home");
-        // }
-
         User user = userDAO.findById(Integer.parseInt(userid));
         userDAO.makeUserAdmin(user, session);
         return new ModelAndView("redirect:/admin");
@@ -59,11 +54,6 @@ public class AdminController {
 
     @GetMapping("/makeuser/{userid}")
     public ModelAndView handleMakeUser(@PathVariable String userid, HttpSession session) {
-        // boolean checkUser = checkIfUserIsAdmin(session);
-        // if(checkUser) {
-        //     return new ModelAndView("redirect:/home");
-        // }
-
         User user = userDAO.findById(Integer.parseInt(userid));
         userDAO.makeUserUser(user, session);
         return new ModelAndView("redirect:/admin");
@@ -71,11 +61,6 @@ public class AdminController {
 
     @GetMapping("/deleteuser/{userid}")
     public ModelAndView handleDeleteUser(@PathVariable String userid, HttpSession session, CommentDAO commentDAO) {
-        // boolean checkUser = checkIfUserIsAdmin(session);
-        // if(checkUser) {
-        //     return new ModelAndView("redirect:/home");
-        // }
-
         User user = userDAO.findById(Integer.parseInt(userid));
         List<Post> posts = postDAO.findByUserId(user.getId());
         List<Comment> comments = commentDAO.getAllUserComments(user);
@@ -85,10 +70,6 @@ public class AdminController {
 
     @GetMapping("/confirmdeleteuser/{userid}")
     public ModelAndView handleConfirmDeleteUser(@PathVariable String userid, HttpSession session) {
-        // boolean checkUser = checkIfUserIsAdmin(session);
-        // if(checkUser) {
-        //     return new ModelAndView("redirect:/home");
-        // }
         return new ModelAndView("delete-user-form", "deleteUserId", userid);
     }
 

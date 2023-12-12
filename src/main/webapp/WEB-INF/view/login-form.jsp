@@ -84,9 +84,6 @@
                         
                     </div>
                 </c:if>
-                <!-- <div class="form-group text-center">
-                    <a href="#">Forgot password?</a>
-                </div> -->
             </form>
         </div>
         <div class="text-center border border-secondary p-3 mt-3">

@@ -6,7 +6,6 @@ import java.util.List;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
-import org.springframework.web.servlet.ModelAndView;
 
 import edu.northeastern.model.EditUserForm;
 import edu.northeastern.pojo.User;

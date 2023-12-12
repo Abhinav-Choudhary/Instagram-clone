@@ -12,7 +12,6 @@ import org.springframework.validation.Validator;
 import edu.northeastern.model.SearchForm;
 import edu.northeastern.pojo.User;
 import edu.northeastern.util.RoleEnum;
-import jakarta.servlet.http.HttpSession;
 
 @Component
 public class SearchValidation implements Validator {

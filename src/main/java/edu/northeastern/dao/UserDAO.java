@@ -26,12 +26,6 @@ import jakarta.servlet.http.HttpSession;
 @Repository
 public class UserDAO {
 
-    // @Autowired
-    // PostDAO postDAO;
-
-    // @Autowired
-    // CommentDAO commentDAO;
-
     @Autowired
     LikeDAO likeDAO;
 
@@ -108,8 +102,6 @@ public class UserDAO {
     }
 
     public void deleteUser(User user, List<Post> posts, List<Comment> comments) {
-        // List<Post> posts = postDAO.getAllPostOfUser(user);
-        // List<Comment> comments = commentDAO.getAllUserComments(user);
         List<Like> likes = likeDAO.getAllUserLikes(user);
         List<Follow> follows = followDAO.getAllUserFollowerFollowing(user);
 
