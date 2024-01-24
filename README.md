@@ -3,13 +3,13 @@
 An Instagram clone built with Spring Boot, MySQL, and Hibernate.
 
 ## Table of Contents
-About: #about
-Features: #features
-Roles: #roles
-Technology Stack: #technology-stack
-Installation: #installation
-Usage: #usage
-Database: #database
+1. About: #about
+2. Features: #features
+3. Roles: #roles
+4. Technology Stack: #technology-stack
+5. Installation: #installation
+6. Usage: #usage
+7. Database: #database
 
 ## About
 This project is an Instagram clone developed for the CSYE6220 Enterprise Software Design course at Northeastern University. It focuses on core image and post functionalities, including comments, likes, and following.
